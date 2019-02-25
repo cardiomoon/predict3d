@@ -4,8 +4,8 @@
 \alias{fit2newdata}
 \title{Make a new data set for prediction}
 \usage{
-fit2newdata(fit, predictors, mode = 1, modx.values = NULL,
-  mod2.values = NULL, colorn = 3, maxylev = 6)
+fit2newdata(fit, predictors, mode = 1, pred.values = NULL,
+  modx.values = NULL, mod2.values = NULL, colorn = 3, maxylev = 6)
 }
 \arguments{
 \item{fit}{An object of calss "lm" or "glm"}
@@ -13,6 +13,8 @@ fit2newdata(fit, predictors, mode = 1, modx.values = NULL,
 \item{predictors}{Names of predictor variables in string}
 
 \item{mode}{A numeric. Useful when the variables are numeric. If 1, c(-1,0,1)*sd + mean is used. If 2, the 14th, 50th, 86th percentile values used. If 3 sequence over a the range of a vector used}
+
+\item{pred.values}{For which values of the predictors should be used? Default is NULL. If NULL, 20 seq_range is used.}
 
 \item{modx.values}{For which values of the moderator should lines be plotted? Default is NULL. If NULL, then the customary +/- 1 standard deviation from the mean as well as the mean itself are used for continuous moderators. If the moderator is a factor variable and modx.values is NULL, each level of the factor is included.}
 

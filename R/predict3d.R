@@ -70,7 +70,7 @@ rank2colors=function(x,palette="Blues",reverse=TRUE){
 #'require(rgl)
 #'require(reshape2)
 #'fit=lm(mpg~hp*wt,data=mtcars)
-#'predict3d(fit,radius=2)
+#'predict3d(fit,radius=2,show.plane=FALSE)
 #'fit=lm(NTAV~age*weight,data=radial)
 #'fit=lm(NTAV~age*smoking,data=radial)
 #'fit=lm(NTAV~age*weight*smoking,data=radial)
@@ -89,13 +89,13 @@ predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
           show.plane=TRUE,plane.color="blue",plane.alpha=0.2,show.lines=TRUE,...)
 {
 
-   # fit=lm(NTAV~age*weight,data=radial)
+   # fit=loess(mpg~wt*hp,data=mtcars)
    # colorn = 20; maxylev=6; se = FALSE;
    # show.summary = FALSE; overlay=NULL;
    # show.legend=FALSE;bg=NULL;type="s";radius=1
    # palette="Blues";palette.reverse=TRUE
    # show.plane=TRUE;plane.color="blue";plane.alpha=0.2;show.lines=TRUE
-   #
+
 
    myradius=radius
    if (show.summary)
@@ -213,10 +213,13 @@ predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
                              newfacet = newfacet)
       colnames(newdata) = c(xname, colorname, facetname)
    }
-
    newdata
+   str(newdata)
+   fit
    result <- predict(fit, newdata = newdata, type = "response",
                      se = TRUE)
+   result$fit
+
    if("loess" %in% class(fit)){
 
    resdf=as.data.frame.table(result$fit,stringsAsFactors = FALSE)

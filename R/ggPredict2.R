@@ -10,6 +10,7 @@ is.mynumeric=function(x,maxylev=6){
 #'@param fit An object of calss "lm" or "glm"
 #'@param predictors Names of predictor variables in string
 #'@param mode A numeric. Useful when the variables are numeric. If 1, c(-1,0,1)*sd + mean is used. If 2, the 14th, 50th, 86th percentile values used. If 3 sequence over a the range of a vector used
+#'@param pred.values For which values of the predictors should be used? Default is NULL. If NULL, 20 seq_range is used.
 #'@param modx.values For which values of the moderator should lines be plotted? Default is NULL. If NULL, then the customary +/- 1 standard deviation from the mean as well as the mean itself are used for continuous moderators. If the moderator is a factor variable and modx.values is NULL, each level of the factor is included.
 #'@param mod2.values For which values of the second moderator should lines be plotted? Default is NULL. If NULL, then the customary +/- 1 standard deviation from the mean as well as the mean itself are used for continuous moderators. If the moderator is a factor variable and modx.values is NULL, each level of the factor is included.
 #'@param colorn The numer of regression lines when the modifier variable(s) are numeric.
@@ -25,11 +26,28 @@ is.mynumeric=function(x,maxylev=6){
 #'fit2newdata(fit,predictors=c("hp","wt","am"))
 #'fit2newdata(fit,predictors=c("hp","wt","cyl"))
 #'fit2newdata(fit,predictors=c("hp"))
-fit2newdata=function(fit,predictors,mode=1,modx.values=NULL,mod2.values=NULL,colorn=3,maxylev=6){
+fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod2.values=NULL,colorn=3,maxylev=6){
+    # mode=1;modx.values=NULL;mod2.values=NULL;colorn=3;maxylev=6
+    # predictors="hp";pred.values=NULL
+    # fit
 
+     if("loess" %in% class(fit)){
+          vars=rownames(attr(fit$terms,"factors"))
+          yvar=vars[1]
+          # xname=vars[2]
+          # if(length(vars)>2) colorname=vars[3]
+          # if(length(vars)>3) facetname=vars[4]
+
+          # df=cbind(fit$y,data.frame(fit$x))
+          # data.frame(fit$x)
+          # colnames(df)[1]=yvar
+          df=data.frame(fit$x)
+          df
+
+     } else{
     df=fit$model[-1]
     yvar=names(fit$model)[1]
-
+    }
     df1<-df[predictors]
     df2<-df[setdiff(names(df),predictors)]
 
@@ -38,9 +56,10 @@ fit2newdata=function(fit,predictors,mode=1,modx.values=NULL,mod2.values=NULL,col
     } else{
         newdf=unique(df1[[1]])
     }
-    newdf=data.frame(newdf)
 
-    if(length(df1)>1){
+    if(!is.null(pred.values)) newdf=pred.values
+    newdf=data.frame(newdf)
+        if(length(df1)>1){
         newdf2<-lapply(df1[2:length(df1)],function(x) {
             if(is.mynumeric(x,maxylev=maxylev)) {
                 if(mode==1) mean(x,na.rm=TRUE)+c(-1,0,1)*sd(x,na.rm=TRUE)
@@ -68,11 +87,18 @@ fit2newdata=function(fit,predictors,mode=1,modx.values=NULL,mod2.values=NULL,col
 
         newdf<-crossing(newdf,newdf3)
     }
-    result <- predict(fit, newdata = newdf, type = "response",se.fit=TRUE)
+
+
+    result <- predict(fit, newdata = newdf, type = "response",se=TRUE)
+    # result <- predict(fit, newdata = newdf, type = "response",se.fit=TRUE)
+     result
+     newdf
+
     newdf[[yvar]]<-result$fit
     newdf$se.fit<-result$se.fit
     newdf$ymax<-newdf[[yvar]]+result$se.fit
     newdf$ymin<-newdf[[yvar]]-result$se.fit
+
     if(!is.null(caption)) attr(newdf,"caption")=caption
     newdf
 }
@@ -94,6 +120,7 @@ fit2newdata=function(fit,predictors,mode=1,modx.values=NULL,mod2.values=NULL,col
 #'@param alpha A numeric. Transparency
 #'@param show.text  Logical. Whether or not add regression equation as label
 #'@param add.modx.values Logical. Whether or not add moderator values to regression equation
+#'@param add.loess Logical. Whether or not add loess line
 #'@param labels labels on regression lines
 #'@param angle angle of text
 #'@param xpos x axis position of label
@@ -107,34 +134,42 @@ fit2newdata=function(fit,predictors,mode=1,modx.values=NULL,mod2.values=NULL,col
 #'@export
 #'@examples
 #'fit=lm(mpg~hp*wt,data=mtcars)
-#'ggPredict2(fit,pred=hp,modx=wt,xpos=0.3,vjust=c(-0.5,-0.5,1.5))
-#'ggPredict2(fit,modx=wt,labels=paste0("label",1:3),xpos=c(0.3,0.6,0.4),vjust=c(-0.5,-0.5,1.5))
+#'ggPredict2(fit,hp)
+#'ggPredict2(fit,hp,wt,xpos=0.3,vjust=c(-0.5,-0.5,1.5))
+#'ggPredict2(fit,hp,wt,labels=paste0("label",1:3),xpos=c(0.3,0.6,0.4),vjust=c(-0.5,-0.5,1.5))
 #'ggPredict2(fit,modx=wt,se=TRUE,xpos=0.3)
 #'ggPredict2(fit,modx=wt,mode=3,colorn=40,show.text=FALSE)
 #'fit=lm(mpg~hp*wt*cyl,data=mtcars)
 #'ggPredict2(fit,modx=wt,modx.values=c(2,3,4,5),mod2=cyl,show.text=FALSE)
-#'ggPredict2(fit,pred=hp,modx=wt,show.point=FALSE,se=TRUE,xpos=0.5)
+#'ggPredict2(fit,hp,wt,show.point=FALSE,se=TRUE,xpos=0.5)
 #'ggPredict2(fit,modx=wt,xpos=0.3)
 #'ggPredict2(fit)
 #'require(TH.data)
 #'fit=glm(cens~pnodes*horTh,data=GBSG2,family=binomial)
-#'ggPredict2(fit,pred=pnodes,modx=horTh,se=TRUE,xpos=c(0.6,0.3),angle=c(40,60),vjust=c(2,-0.5))
+#'ggPredict2(fit,pnodes,horTh,se=TRUE,xpos=c(0.6,0.3),angle=c(40,60),vjust=c(2,-0.5))
 #'fit1=glm(cens~pnodes,data=GBSG2,family=binomial)
-#'ggPredict2(fit1,pred=pnodes,vjust=0)
+#'ggPredict2(fit1,vjust=1.5,angle=45)
 #'fit3=glm(cens~pnodes*age,data=GBSG2,family=binomial)
 #'ggPredict2(fit3,pred=pnodes,modx=age,mode=3,colorn=10,show.text=FALSE)
 #'fit2=glm(cens~pnodes*age*horTh,data=GBSG2,family=binomial)
 #'ggPredict2(fit2,pred=pnodes,modx=age,mod2=horTh,mode=3,colorn=10,show.text=FALSE)
 ggPredict2=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.values=NULL,
                     mode=1,colorn=3,maxylev=6,show.point=TRUE,jitter=NULL,se=FALSE,alpha=0.1,
-                    show.text=TRUE, add.modx.values=TRUE,
+                    show.text=TRUE, add.modx.values=TRUE,add.loess=FALSE,
                     labels=NULL,angle=NULL,xpos=NULL,vjust=-0.5,digits=3,...) {
+
+
 
     # mod2=NULL;modx.values=NULL;mod2.values=NULL
     # mode=1;colorn=3;maxylev=6;show.point=TRUE;se=FALSE;alpha=0.1
     # show.text=TRUE; add.modx.values=TRUE
     # labels=NULL;xpos=0.7;vjust=-0.5;digits=3
     # predictors=c("hp","wt")
+    # fit=loess(mpg~hp*wt,data=mtcars)
+    # fit=lm(mpg~hp*wt,data=mtcars)
+    # predc="hp";modxc="wt";mod2c=NULL;jitter=NULL
+
+
     predc <- quo_name(enexpr(pred))
     if(predc=="NULL"){
         pred<-NULL
@@ -147,6 +182,7 @@ ggPredict2=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.valu
     if(modxc=="NULL"){
         modx<-NULL
         modxc<-NULL
+
     }
     mod2c <- quo_name(enexpr(mod2))
     mod2<-enquo(mod2)
@@ -159,64 +195,90 @@ ggPredict2=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.valu
     predictors=c(predc,modxc,mod2c)
     # str(predictors)
 
-    yvar=names(fit$model)[1]
+    if(class(fit)[1]=="loess"){
+         yvar=attr(attr(fit$terms,"factors"),"dimnames")[[1]][1]
+    } else{
+         yvar=names(fit$model)[1]
+    }
     newdata=fit2newdata(fit,predictors,mode=mode,modx.values=modx.values,
                         mod2.values=mod2.values,colorn=colorn,maxylev=maxylev)
 
     fitted=newdata
-    if(!is.null(modx) & !is.null(mod2)) {
-        fitted<-fitted %>% group_by(!! modx, !! mod2)
-    } else if(!is.null(mod2)) {
-        fitted<-fitted %>% group_by(!! mod2)
-    } else if(!is.null(modx)) {
-        fitted<-fitted %>% group_by(!! modx)
+    if(!is.null(modxc) & !is.null(mod2c)) {
+        fitted<-eval(parse(text=paste0("group_by(fitted,",modxc,",",mod2c,")")))
+    } else if(!is.null(mod2c)) {
+        fitted<-eval(parse(text=paste0("group_by(fitted,",mod2c,")")))
+    } else if(!is.null(modxc)) {
+        fitted<-eval(parse(text=paste0("group_by(fitted,",modxc,")")))
     }
     # str(fitted)
+     # fitted
 
-    predictors=c(modxc,mod2c)
+    predictors=unique(c(modxc,mod2c))
+    predictors
     if(length(predictors)>0){
          formulaString=getNewFormula(fit,predictors)
+
          newFormula=as.formula(formulaString)
     } else{
         newFormula=fit$terms
 
     }
 
+
     if(class(fit)[1]=="lm") {
         fitted<-fitted %>% do(coef=lm(newFormula,data=.)$coef[1:2])
     } else if(class(fit)[1]=="glm") {
         fitted<-fitted %>% do(coef=glm(newFormula,data=.,family=fit$family$family)$coef[1:2])
+    } else{
+        fitted<-fitted %>% do(coef=lm(newFormula,data=.)$coef[1:2])
     }
-    coef=unlist(fitted$coef)
-    fitted$intercept=coef[seq(1,by=2,length.out=nrow(fitted))]
-    fitted$slope=coef[seq(2,by=2,length.out=nrow(fitted))]
+
+    if(class(fit)[1]=="loess"){
+         rawdata=cbind(fit$y,data.frame(fit$x))
+         colnames(rawdata)[1]=yvar
+    } else {
+        rawdata=fit$model
+    }
+        coef=unlist(fitted$coef)
+        fitted$intercept=coef[seq(1,by=2,length.out=nrow(fitted))]
+        fitted$slope=coef[seq(2,by=2,length.out=nrow(fitted))]
 
     if(is.null(xpos)){
         if(class(fit)[1]=="lm") xpos=0.7
         else if(class(fit)[1]=="glm") xpos=0.4
+        else xpos=0.5
     }
 
-    if(is.null(modx)){
+
+
+    if(is.null(modxc)){
     p<-ggplot(data=newdata,aes_string(x=predc,y=yvar))
-    } else{
+    }  else {
     p<-ggplot(data=newdata,aes_string(x=predc,y=yvar,color=modxc,fill=modxc,group=modxc))
     }
     p<-p+  geom_line()
+    p
+
     if(is.null(jitter)){
         if(class(fit)[1]=="glm") jitter=TRUE
         else jitter=FALSE
     }
+
     if(show.point==TRUE) {
-        if(jitter) p<-p+geom_jitter(data=fit$model,width=0,height=0.05)
-        else p<-p+geom_point(data=fit$model)
+        if(jitter) p<-p+geom_jitter(data=rawdata,width=0,height=0.05)
+        else p<-p+geom_point(data=rawdata)
     }
+    if(add.loess) p<-p+stat_smooth(data=rawdata,se=FALSE,color="red",fullrange = TRUE)
 
     if(se==TRUE) p<-p+ geom_ribbon(aes_string(ymax="ymax",ymin="ymin",color=NULL),alpha=alpha)
     if(!is.null(mod2c)) p<-p+eval(parse(text=paste0("facet_grid(~",mod2c,")")))
 
     facetno<-NULL
     if(!is.null(mod2c)) facetno=length(unique(fit$model[[mod2c]]))
-    fitted<-slope2angle(fitted,predc,p,method=class(fit)[1],xpos=xpos,digits=digits,
+
+    fitted
+    fitted<-slope2angle(fitted,fit,predc,p,method=class(fit)[1],xpos=xpos,digits=digits,
                         facetno=facetno,add.modx.values=add.modx.values)
     if(!is.null(angle)) fitted$angle=angle
     if(!is.null(labels)){
@@ -244,6 +306,7 @@ ggPredict2=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.valu
 
 #'Make angle data with slope data
 #'@param df A data.frame
+#'@param fit An object of class "lm" or "glm"
 #'@param predc Name of predictor variable
 #'@param p An object of class ggplot
 #'@param method String. Choices are one of "lm" and "glm".
@@ -251,8 +314,9 @@ ggPredict2=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.valu
 #'@param digits integer indicating the number of decimal places
 #'@param facetno Tne number of facets
 #'@param add.modx.values Whether add name of moderator variable
-slope2angle=function(df,predc,p,method="lm",xpos=0.7,digits=3,facetno=NULL,add.modx.values=TRUE){
+slope2angle=function(df,fit,predc,p,method="lm",xpos=0.7,digits=3,facetno=NULL,add.modx.values=TRUE){
     # digits=3;xpos=0.7
+    #
     info=getAspectRatio(p)
     ratio=info$ratio
     if(!is.null(facetno)) ratio=ratio*facetno
@@ -284,6 +348,9 @@ slope2angle=function(df,predc,p,method="lm",xpos=0.7,digits=3,facetno=NULL,add.m
         }
         }
     }
+    if(method=="loess"){
+         df$label=paste0(colnames(df)[1]," == ",df$labels2)
+    }
     count=nrow(df)
     x=info$xmin+(info$xmax-info$xmin)*xpos
     if(length(xpos)==1){
@@ -295,13 +362,24 @@ slope2angle=function(df,predc,p,method="lm",xpos=0.7,digits=3,facetno=NULL,add.m
            y=c(y,df$slope[i]*x[i]+df$intercept[i])
         }else if(method=="glm"){
             y=c(y,1/(1+exp(-(df$slope[i]*x[i]+df$intercept[i]))))
+        } else{
+             y=c(y,1)
         }
     }
     y
 
     df$x=x
     df$y=y
-    if(method=="glm") df$angle=0
+    if(method=="loess"){
+         df[[predc]]=df$x
+
+         result <- predict(fit, newdata = df, type = "response",se=TRUE)
+         # result <- predict(fit, newdata = newdf, type = "response",se.fit=TRUE)
+         df$y<-result$fit
+
+
+    }
+    if(method!="lm") df$angle=0
     attr(df,"ratio")=ratio
     # print(df)
     df
@@ -317,7 +395,13 @@ slope2angle=function(df,predc,p,method="lm",xpos=0.7,digits=3,facetno=NULL,add.m
 #'getNewFormula(fit,predictors=c("wt","cyl"))
 getNewFormula=function(fit,predictors=NULL){
     # predictors<-NULL
-    temp=names(fit$coef)[-1]
+    if("loess" %in% class(fit)){
+       temp=attr(fit$terms,"term.labels")
+       yvar=attr(attr(fit$terms,"factors"),"dimnames")[[1]][1]
+    } else{
+        temp=names(fit$coef)[-1]
+        yvar=names(fit$model)[1]
+    }
     temp
     for( i in seq_along(predictors)){
         select=which(!str_detect(temp,predictors[i]))
@@ -325,8 +409,23 @@ getNewFormula=function(fit,predictors=NULL){
         temp=temp[select]
     }
     # str(fit)
-    result=paste0(names(fit$model)[1],"~",paste(temp,collapse="+"))
+    result=paste0(yvar,"~",paste(temp,collapse="+"))
     result
 
 }
+
+#'Get aspect information og a ggplot
+#'@param p A ggplot object
+#'@importFrom ggplot2 layer_scales
+#'@export
+getAspectRatio=function(p){
+     xmin=layer_scales(p)$x$range$range[1]
+     xmax=layer_scales(p)$x$range$range[2]
+     ymin=layer_scales(p)$y$range$range[1]
+     ymax=layer_scales(p)$y$range$range[2]
+
+     ratio=(xmax-xmin)/(ymax-ymin)
+     list(xmin=xmin,xmax=xmax,ymin=ymin,ymax=ymax,ratio=ratio)
+}
+
 
