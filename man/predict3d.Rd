@@ -6,9 +6,9 @@
 \usage{
 predict3d(fit, colorn = 20, maxylev = 6, se = FALSE,
   show.summary = FALSE, overlay = NULL, show.legend = FALSE,
-  bg = NULL, type = "s", radius = 1, palette = "Blues",
+  bg = NULL, type = "s", radius = 1, palette = NULL,
   palette.reverse = TRUE, show.plane = TRUE, plane.color = "blue",
-  plane.alpha = 0.2, show.lines = TRUE, ...)
+  plane.alpha = 0.1, show.lines = TRUE, ...)
 }
 \arguments{
 \item{fit}{A model object for which prediction is desired.}
@@ -49,16 +49,18 @@ predict3d(fit, colorn = 20, maxylev = 6, se = FALSE,
 Draw 3d predict plot using package `rgl`
 }
 \examples{
-require(plyr)
-require(moonBook)
-require(rgl)
-require(reshape2)
+fit=loess(mpg~hp*wt,data=mtcars)
+ggPredict(fit)
+predict3d(fit,radius=2)
 fit=lm(mpg~hp*wt,data=mtcars)
-predict3d(fit,radius=2,show.plane=FALSE)
+predict3d(fit,radius=2,palette="Blues")
+require(moonBook)
 fit=lm(NTAV~age*weight,data=radial)
 fit=lm(NTAV~age*smoking,data=radial)
 fit=lm(NTAV~age*weight*smoking,data=radial)
+fit=lm(NTAV~age*smoking*DM,data=radial)
 predict3d(fit)
+predict3d(fit,overlay=TRUE)
 require(TH.data)
 fit=glm(cens~pnodes*horTh,data=GBSG2,family=binomial)
 fit=glm(cens~pnodes*age,data=GBSG2,family=binomial)
@@ -67,4 +69,5 @@ fit=glm(cens~pnodes*age*horTh,data=GBSG2,family=binomial)
 predict3d(fit)
 fit=glm(cens~pnodes+age+horTh,data=GBSG2,family=binomial)
 predict3d(fit,overlay=TRUE)
+predict3d(fit)
 }

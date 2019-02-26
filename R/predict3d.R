@@ -33,10 +33,16 @@ rank2group2=function(x,k=4){
 #'@param reverse Logical. Whether or not reverse the order of the color palette
 #'@importFrom ggiraphExtra palette2colors
 #'@export
+#'@examples
+#'rank2colors(mtcars$hp,palette=NULL)
 rank2colors=function(x,palette="Blues",reverse=TRUE){
+   if(is.null(palette)){
+      result=rep("#000000",length(x))
+   } else{
    k=length(ggiraphExtra::palette2colors(palette,reverse=reverse))
    group=rank2group2(x,k=k)
    result=ggiraphExtra::palette2colors(palette,reverse=reverse)[group]
+   }
    result
 }
 
@@ -63,18 +69,22 @@ rank2colors=function(x,palette="Blues",reverse=TRUE){
 #'
 #' @importFrom rgl open3d next3d surface3d plot3d lines3d mfrow3d bg3d legend3d rglwidget
 #' @importFrom grDevices xyz.coords
+#' @importFrom reshape2 dcast
+#' @importFrom plyr dlply "."
 #' @export
 #' @examples
-#'require(plyr)
-#'require(moonBook)
-#'require(rgl)
-#'require(reshape2)
+#'fit=loess(mpg~hp*wt,data=mtcars)
+#'ggPredict(fit)
+#'predict3d(fit,radius=2)
 #'fit=lm(mpg~hp*wt,data=mtcars)
-#'predict3d(fit,radius=2,show.plane=FALSE)
+#'predict3d(fit,radius=2,palette="Blues")
+#'require(moonBook)
 #'fit=lm(NTAV~age*weight,data=radial)
 #'fit=lm(NTAV~age*smoking,data=radial)
 #'fit=lm(NTAV~age*weight*smoking,data=radial)
+#'fit=lm(NTAV~age*smoking*DM,data=radial)
 #'predict3d(fit)
+#'predict3d(fit,overlay=TRUE)
 #'require(TH.data)
 #'fit=glm(cens~pnodes*horTh,data=GBSG2,family=binomial)
 #'fit=glm(cens~pnodes*age,data=GBSG2,family=binomial)
@@ -83,14 +93,15 @@ rank2colors=function(x,palette="Blues",reverse=TRUE){
 #'predict3d(fit)
 #'fit=glm(cens~pnodes+age+horTh,data=GBSG2,family=binomial)
 #'predict3d(fit,overlay=TRUE)
+#'predict3d(fit)
 predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
           show.summary = FALSE, overlay=NULL,
-          show.legend=FALSE,bg=NULL,type="s",radius=1,palette="Blues",palette.reverse=TRUE,
-          show.plane=TRUE,plane.color="blue",plane.alpha=0.2,show.lines=TRUE,...)
+          show.legend=FALSE,bg=NULL,type="s",radius=1,palette=NULL,palette.reverse=TRUE,
+          show.plane=TRUE,plane.color="blue",plane.alpha=0.1,show.lines=TRUE,...)
 {
 
    # fit=loess(mpg~wt*hp,data=mtcars)
-   # colorn = 20; maxylev=6; se = FALSE;
+   #  colorn = 20; maxylev=6; se = FALSE;
    # show.summary = FALSE; overlay=NULL;
    # show.legend=FALSE;bg=NULL;type="s";radius=1
    # palette="Blues";palette.reverse=TRUE
@@ -101,8 +112,8 @@ predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
    if (show.summary)
       print(summary(fit))
    (count = length(names(fit$model)) - 1)
-   if (count > 3) {
-      warning("maximum three independent variables are allowed")
+   if (count > 4) {
+      warning("maximum four independent variables are allowed")
       return
    }
    xname <- facetname <- colorname <- yname <- NULL
@@ -128,128 +139,19 @@ predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
       (facetname = names(fit$model)[4])
    }
 
-  # mapping = eval(parse(text = temp))
      data <- fit$model
    }
 
-   xnumeric = FALSE
-   if (is.numeric(data[[xname]])) {
-      xnumeric = TRUE
-   } else {
-      if (count > 1) {
-         if (is.numeric(data[[colorname]])) {
-            temp = xname
-            xname = colorname
-            colorname = temp
-            xnumeric = TRUE
-         }
-      }
-      if (!xnumeric) {
-         if (count > 2) {
-            if (is.numeric(data[[facetname]])) {
-               temp = xname
-               xname = facetname
-               facetname = temp
-               xnumeric = TRUE
-            }
-         }
-      }
-   }
-   (uniqueXNo = length(unique(data[[xname]])))
-   if (uniqueXNo > colorn) {
-      newx = pretty(data[[xname]],colorn)
-      xcount = 1
-   } else {
-      newx = unique(data[[xname]])
-      if (is.numeric(data[[xname]]))
-         xcount = 1
-      else xcount = length(unique(data[[xname]]))
-   }
-   newx
 
-   if (!is.null(colorname)) {
-      uniqueColorNo = length(unique(data[[colorname]]))
-      if (uniqueColorNo > colorn) {
-         newcolor = pretty(data[[colorname]],colorn-1)
-         colorcount = colorn
-      }
-      else {
-         if (is.numeric(data[[colorname]]) & (length(unique(data[[colorname]])) >
-                                              maxylev)) {
-            #data[[colorname]]=factor(data[[colorname]])
-            newcolor = seq(from = min(data[[colorname]],
-                                      na.rm = T), to = max(data[[colorname]], na.rm = T),
-                           length.out = colorn)
-            colorcount = colorn
-         }
-         else {
-            newcolor = sort(unique(data[[colorname]]))
-            colorcount = length(unique(data[[colorname]]))
-         }
-      }
-   }
-   newcolor
-   if (!is.null(facetname)) {
-      uniqueFacetNo = length(unique(data[[facetname]]))
-      if (uniqueFacetNo > colorn) {
-         newfacet = pretty(data[[facetname]],colorn-1)
-         facetcount = 1
-      }
-      else {
-         newfacet = unique(data[[facetname]])
-         facetcount = length(unique(data[[facetname]]))
-      }
-   }
+   predictors=c(xname,colorname,facetname)
+   newdata2=fit2newdata(fit,predictors,mode=3,colorn=colorn,maxylev=maxylev)
 
-   if (is.null(colorname) && is.null(facetname)) {
-      temp = newx
-      newdata = data.frame(temp)
-      colnames(newdata) = c(xname)
-   } else if (is.null(facetname)) {
-      newdata <- expand.grid(newx = newx, newcolor = newcolor)
-      colnames(newdata) = c(xname, colorname)
-   } else {
-      newdata <- expand.grid(newx = newx, newcolor = newcolor,
-                             newfacet = newfacet)
-      colnames(newdata) = c(xname, colorname, facetname)
-   }
-   newdata
-   str(newdata)
-   fit
-   result <- predict(fit, newdata = newdata, type = "response",
-                     se = TRUE)
-   result$fit
 
-   if("loess" %in% class(fit)){
+   colorcount = length(unique(newdata2[[colorname]]))
+   facetcount = ifelse(is.null(facetname),0,length(unique(newdata2[[facetname]])))
+   newx=unique(newdata2[[xname]])
+   newcolor=unique(newdata2[[colorname]])
 
-   resdf=as.data.frame.table(result$fit,stringsAsFactors = FALSE)
-
-   extractNumber=function(x){
-      if(is.numeric(x)) {
-         value=x
-      } else{
-         result=unlist(strsplit(x,"="))
-         result1=result[seq(2,length(result),by=2)]
-         value=as.numeric(result1)
-      }
-      value
-   }
-   resdf2=as.data.frame(apply(resdf,2,extractNumber))
-
-   colnames(resdf2)=c(xname,colorname,facetname,yname)
-   newdata2<-resdf2
-   } else{
-
-   newdata[[yname]] <- result$fit
-   newdata$se.fit <- result$se.fit
-   newdata$ymax <- newdata[[yname]] + result$se.fit
-   newdata$ymin <- newdata[[yname]] - result$se.fit
-   newdata
-
-   newdata2 <- newdata
-
-   }
-   newdata2
 
    open3d()
    #par3d(scale=c(1,1,0.2),cex=.6)
@@ -299,17 +201,6 @@ predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
                    xlab=xname,ylab=colorname,zlab=yname,xlim=myxlim,ylim=myylim,zlim=myzlim,
                    sub=Reduce(paste0,deparse(fit$call)),...)
 
-            # plot3d(data[[xname]],data[[colorname]],data[[yname]],col=data$color,
-            #        type=type,radius=myradius,
-            #        xlab=xname,ylab=colorname,zlab=yname,xlim=myxlim,ylim=myylim,zlim=myzlim,
-            #        sub=Reduce(paste0,deparse(fit$call)))
-           # temp=na.omit(newdata2)
-           #  temp$color=rank2colors(temp[[colorname]],palette=palette,reverse=palette.reverse)
-           #  summary(temp)
-           #  plot3d(temp[[xname]],temp[[colorname]],temp[[yname]],col=temp$color,
-           #         type=type,radius=myradius,
-           #         xlab=xname,ylab=colorname,zlab=yname,xlim=myxlim,ylim=myylim,zlim=myzlim,
-           #         sub=Reduce(paste0,deparse(fit$call)))
 
             newdata2=newdata2[order(newdata2[[colorname]],newdata2[[xname]]),]
             temp= paste0("dcast(newdata2[1:3],",xname,"~",colorname,",value.var='",yname,"')[-1]")
@@ -376,6 +267,7 @@ predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
                df1=df[df[[colorname]]==sort(unique(data[[colorname]]))[i],]
                if(!is.numeric(df1[[colorname]])) df1[[colorname]]=i
                if(show.lines){
+                  # print(df1)
                lines3d(xyz.coords(as.matrix(df1)),col=i,lwd=2)
                if(se) lines3d(xyz.coords(as.matrix(df1[c(1,2,4)])),col=i,lwd=0.5)
                if(se) lines3d(xyz.coords(as.matrix(df1[c(1,2,5)])),col=i,lwd=0.5)
@@ -396,8 +288,14 @@ predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
          if(show.legend) legend3d("bottomright",legend=sort(unique(data[[colorname]])),pch=21,pt.bg=1:colorcount)
 
    } else{
+
+      if(is.mynumeric(data[[colorname]])) {
+         data$color=rank2colors(data[[colorname]],palette=palette,reverse=palette.reverse)
+      } else{
+         data$color=as.numeric(factor(data[[colorname]]))
+      }
       if(overlay)  {
-         plot3d(data[[xname]],data[[colorname]],data[[yname]],col=as.numeric(factor(data[[facetname]])),
+         plot3d(data[[xname]],data[[colorname]],data[[yname]],col=data$color,
                 type=type,radius=myradius,
                 xlab=xname,ylab=colorname,zlab=yname,xlim=myxlim,ylim=myylim,zlim=myzlim,
                 sub=Reduce(paste0,deparse(fit$call)),...)
@@ -409,8 +307,8 @@ predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
       }
 
          result=eval(parse(text=paste0("dlply(newdata2,.(",facetname,"),mysummary)")))
-         result
-         i=1
+
+
          for(i in 1:facetcount){
             if((i>1)&&(!overlay)){
                next3d()
@@ -419,18 +317,37 @@ predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
             }
             if(!overlay){
             data1=data[data[[facetname]]==unique(data[[facetname]])[i],]
+
+
             plot3d(data1[[xname]],data1[[colorname]],data1[[yname]],
                    xlab=xname,ylab=colorname,zlab=yname,
-                   type=type,col=i,radius=myradius,
+                   type=type,col=data1$color,radius=myradius,
                    xlim=myxlim,ylim=myylim,zlim=myzlim,
                    sub=paste0(facetname,":",unique(data[[facetname]])[i]),...)
             }
             z=as.matrix(result[[as.character(unique(data[[facetname]])[i])]])
             if(show.plane) surface3d(newx,newcolor,z,col=i,alpha=plane.alpha)
             newdata4=newdata2[newdata2[[facetname]]==unique(data[[facetname]])[i],]
-            newdata4
+            select=c(xname,colorname,facetname,yname,"se.fit","ymax","ymin")
+            newdata4 <- newdata4[select]
 
             if(show.lines) {
+
+               if(colorcount<=maxylev){
+
+                  for(j in 1:length(newcolor)){
+
+                     newdata5=newdata4[newdata4[[colorname]]==newcolor[j],]
+                     if(!is.numeric(newdata5[[colorname]])) newdata5[[colorname]]<-as.numeric(newdata5[[colorname]])
+                     lines3d(xyz.coords(as.matrix(newdata5[c(1,2,4)])),col=j,lwd=2,alpha=0.5)
+
+
+                     if(se) lines3d(xyz.coords(as.matrix(newdata5[c(1,2,5)])),col=j,lwd=0.5)
+                     if(se) lines3d(xyz.coords(as.matrix(newdata5[c(1,2,6)])),col=j,lwd=0.5)
+                  }
+
+               } else{
+
 
                for(j in 1:length(newcolor)){
                   newdata5=newdata4[newdata4[[colorname]]==newcolor[j],]
@@ -439,6 +356,7 @@ predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
                for(j in 1:length(newx)){
                   newdata5=newdata4[newdata4[[xname]]==newx[j],]
                   lines3d(xyz.coords(as.matrix(newdata5[c(1,2,4)])),col=i,lwd=1,alpha=0.5)
+               }
                }
 
             }

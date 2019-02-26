@@ -2,10 +2,10 @@ Package: predict3d
 Type: Package
 Title: Draw Three Dimensional Predict Plot Using Package `rgl`
 Version: 0.1.0
-URL: https://github.com/cardiomoon/processR
-BugReports: https://github.com/cardiomoon/processR/issues
+URL: https://github.com/cardiomoon/predict3d
+BugReports: https://github.com/cardiomoon/predict3d/issues
 Authors@R: person("Keon-Woong","Moon", role=c("aut", "cre"),email="cardiomoon@gmail.com")
-Description: Draw 2 dimensional and three dimensional plot using package `ggplot2` and `rgl`
+Description: Draw 2 dimensional and three dimensional plot using package `ggplot2` and `rgl`.
 Depends:
    R (>= 2.10)
 License: GPL-2
@@ -13,5 +13,19 @@ Encoding: UTF-8
 LazyData: true
 Imports:
    ggplot2,
-   rgl
+   rgl,
+   dplyr,
+   ggiraphExtra,
+   modelr,
+   prediction,
+   purrr,
+   rlang,
+   stringr,
+   magrittr,
+   stats,
+   TH.data,
+   moonBook,
+   reshape2,
+   plyr,
+   tidyr
 RoxygenNote: 6.1.1
