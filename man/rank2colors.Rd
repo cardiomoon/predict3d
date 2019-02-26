@@ -4,7 +4,7 @@
 \alias{rank2colors}
 \title{Rank a numeric vector using proportional table and returns character vactor of names of color using palette}
 \usage{
-rank2colors(x, palette = "Blues", reverse = TRUE)
+rank2colors(x, palette = "Blues", reverse = TRUE, color = "red")
 }
 \arguments{
 \item{x}{A numeric vector}
@@ -12,6 +12,8 @@ rank2colors(x, palette = "Blues", reverse = TRUE)
 \item{palette}{Name of the color palette}
 
 \item{reverse}{Logical. Whether or not reverse the order of the color palette}
+
+\item{color}{Default color when palette is NULL}
 }
 \description{
 Rank a numeric vector using proportional table and returns character vactor of names of color using palette

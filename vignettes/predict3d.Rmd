@@ -1,0 +1,104 @@
+---
+title: "R package predict3d"
+author: "Keon-Woong Moon"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{predict3d}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = NA,
+  fig.height=7,
+  fig.width=7
+)
+```
+
+R package `predict3d` aims to draw predicts plot for various regressiom models. The main two functions are ggPredict() for 2-dimensional plot and predict3d() for 3-dimensional plot.
+
+## Package Installation
+
+You can install `predict3d` package from github.
+
+```{r,eval=FALSE}
+if(!require(devtools)) install.packages("devtools")
+devtools::install_github("cardiomoon/predict3d"")
+```
+
+## Linear Regression Models
+
+You can draw linear regression models. First model has one categorial and one continuous explanatory variables.
+
+```{r,message=FALSE}
+require(predict3d)
+require(rgl)
+fit1=lm(mpg~wt*am,data=mtcars)
+summary(fit1)
+```
+
+You can draw plot for this model. ggPredict() function draws a scatterplot with regression line and shows regression equations parallel to the regression lines.
+
+```{r}
+ggPredict(fit1,digits=1)
+predict3d(fit1,radius=0.3)
+rglwidget(elementId = "1st")
+```
+
+The second model has two continuous variables as explanatory variables. You can change the labels and the relative x position and the y position.
+
+```{r}
+fit2=lm(mpg~wt*hp,data=mtcars)
+ggPredict(fit2,labels=paste0("label",1:3),xpos=c(0.3,0.4,0.3))
+predict3d(fit2)
+rglwidget(elementId = "2nd")
+
+```
+
+## Generalized Linear Models
+
+You can draw gemneralized linear models.
+
+```{r, fig.height=5,fig.width=8,message=FALSE,warning=FALSE}
+require(TH.data)
+fit3=glm(cens~pnodes*age*horTh,data=GBSG2,family=binomial)
+ggPredict(fit3,se=TRUE,show.text = FALSE)
+predict3d(fit3,radius=0.5)
+rglwidget(elementId = "3rd")
+```
+
+## Local Polynomial Regression Fitting
+
+You can draw the loess model.
+
+```{r}
+fit=loess(mpg~hp*wt,data=mtcars)
+ggPredict(fit)
+predict3d(fit,radius=2)
+rglwidget(elementId = "4th")
+```
+
+## Play with predict3d()
+
+Once you have create a model with predict3d(), you can move your object with your mouse or R codes. For example, You can rotate you object with this R codes.
+
+```{r,eval=FALSE}
+start <- proc.time()[3]
+while ((i <- 36*(proc.time()[3] - start)) < 360) {
+     rgl.viewpoint(i, i/4); 
+}
+play3d(spin3d(axis = c(1, 0, 0), rpm = 30), duration = 2)
+```
+
+You can save your 3d plot as a figure file or pdf file.
+
+```{r,eval=FALSE}
+rgl.snapshot("fig1.png")
+rgl.postscript("fig2.pdf")
+```
+
+For more information about package `rgl`, please read the package vignette at: https://cran.r-project.org/web/packages/rgl/vignettes/rgl.html 
+

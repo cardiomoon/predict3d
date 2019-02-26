@@ -31,13 +31,14 @@ rank2group2=function(x,k=4){
 #'@param x A numeric vector
 #'@param palette Name of the color palette
 #'@param reverse Logical. Whether or not reverse the order of the color palette
+#'@param color Default color when palette is NULL
 #'@importFrom ggiraphExtra palette2colors
 #'@export
 #'@examples
 #'rank2colors(mtcars$hp,palette=NULL)
-rank2colors=function(x,palette="Blues",reverse=TRUE){
+rank2colors=function(x,palette="Blues",reverse=TRUE,color="red"){
    if(is.null(palette)){
-      result=rep("#000000",length(x))
+      result=rep(color,length(x))
    } else{
    k=length(ggiraphExtra::palette2colors(palette,reverse=reverse))
    group=rank2group2(x,k=k)
@@ -61,6 +62,8 @@ rank2colors=function(x,palette="Blues",reverse=TRUE){
 #' @param radius The size of sphere
 #' @param palette Name of color palette
 #' @param palette.reverse Logical. Whether or not reverse the palette order
+#' @param color Default color. Color is used when the palette is NULL
+#' @param show.subtitle Logical. If true, show regression call as subtitle
 #' @param show.plane Logical. If true, show regression plane
 #' @param plane.color Name of color of regression plane
 #' @param plane.alpha Transparency scale of regression plane
@@ -73,11 +76,12 @@ rank2colors=function(x,palette="Blues",reverse=TRUE){
 #' @importFrom plyr dlply "."
 #' @export
 #' @examples
+#' require(rgl)
 #'fit=loess(mpg~hp*wt,data=mtcars)
 #'ggPredict(fit)
 #'predict3d(fit,radius=2)
-#'fit=lm(mpg~hp*wt,data=mtcars)
-#'predict3d(fit,radius=2,palette="Blues")
+#'fit=lm(mpg~hp*am,data=mtcars)
+#'predict3d(fit)
 #'require(moonBook)
 #'fit=lm(NTAV~age*weight,data=radial)
 #'fit=lm(NTAV~age*smoking,data=radial)
@@ -96,16 +100,18 @@ rank2colors=function(x,palette="Blues",reverse=TRUE){
 #'predict3d(fit)
 predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
           show.summary = FALSE, overlay=NULL,
-          show.legend=FALSE,bg=NULL,type="s",radius=1,palette=NULL,palette.reverse=TRUE,
+          show.legend=FALSE,bg=NULL,type="s",radius=2,palette="Blues",palette.reverse=TRUE,
+          color="red",show.subtitle=TRUE,
           show.plane=TRUE,plane.color="blue",plane.alpha=0.1,show.lines=TRUE,...)
 {
 
-   # fit=loess(mpg~wt*hp,data=mtcars)
+   # fit=lm(Sepal.Length~Sepal.Width*Species,data=iris)
    #  colorn = 20; maxylev=6; se = FALSE;
    # show.summary = FALSE; overlay=NULL;
    # show.legend=FALSE;bg=NULL;type="s";radius=1
    # palette="Blues";palette.reverse=TRUE
    # show.plane=TRUE;plane.color="blue";plane.alpha=0.2;show.lines=TRUE
+    # show.subtitle=FALSE
 
 
    myradius=radius
@@ -190,16 +196,18 @@ predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
    myylim=mylim(data[[colorname]])
    myzlim=mylim(data[[yname]])
 
+   subtitle=ifelse(show.subtitle,
+                   ifelse(is.null(attr(newdata2,"caption")),Reduce(paste0,deparse(fit$call)),attr(newdata2,"caption")),"")
    if(!is.null(bg)) bg3d(bg)
 
    if(is.null(facetname)) {
          if(is.numeric(data[[colorname]]) && (colorcount>maxylev)) {
-            data$color=rank2colors(data[[colorname]],palette=palette,reverse=palette.reverse)
+            data$color=rank2colors(data[[colorname]],palette=palette,reverse=palette.reverse,color=color)
             data
             plot3d(data[[xname]],data[[colorname]],data[[yname]],col=data$color,
                    type=type,radius=myradius,
                    xlab=xname,ylab=colorname,zlab=yname,xlim=myxlim,ylim=myylim,zlim=myzlim,
-                   sub=Reduce(paste0,deparse(fit$call)),...)
+                   sub=subtitle,...)
 
 
             newdata2=newdata2[order(newdata2[[colorname]],newdata2[[xname]]),]
@@ -210,7 +218,7 @@ predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
 
             if(show.lines) {
                newdata2=na.omit(newdata2)
-            newdata2$color=rank2colors(newdata2[[colorname]],palette=palette,reverse=palette.reverse)
+            newdata2$color=rank2colors(newdata2[[colorname]],palette=palette,reverse=palette.reverse,color=color)
 
             for(i in 1:length(newcolor)){
                 newdata4=newdata2[newdata2[[colorname]]==newcolor[i],]
@@ -229,7 +237,7 @@ predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
             plot3d(data[[xname]],data[[colorname]],data[[yname]],col=as.numeric(factor(data[[colorname]])),
                    type=type,radius=myradius,
                    xlab=xname,ylab=colorname,zlab=yname,xlim=myxlim,ylim=myylim,zlim=myzlim,
-                   sub=Reduce(paste0,deparse(fit$call)),...)
+                   sub=subtitle,...)
                     #newdata2=newdata2[order(newdata2[[colorname]],newdata2[[xname]]),]
                     temp= paste0("dcast(newdata2[1:3],",xname,"~",colorname,",value.var='",yname,"')[-1]")
                     newdata3=eval(parse(text=temp))
@@ -290,7 +298,7 @@ predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
    } else{
 
       if(is.mynumeric(data[[colorname]])) {
-         data$color=rank2colors(data[[colorname]],palette=palette,reverse=palette.reverse)
+         data$color=rank2colors(data[[colorname]],palette=palette,reverse=palette.reverse,color=color)
       } else{
          data$color=as.numeric(factor(data[[colorname]]))
       }
@@ -298,7 +306,7 @@ predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
          plot3d(data[[xname]],data[[colorname]],data[[yname]],col=data$color,
                 type=type,radius=myradius,
                 xlab=xname,ylab=colorname,zlab=yname,xlim=myxlim,ylim=myylim,zlim=myzlim,
-                sub=Reduce(paste0,deparse(fit$call)),...)
+                sub=subtitle,...)
       }
       mysummary=function(df){
          temp=paste0("dcast(df,",xname,"~",colorname,",value.var='",yname,"')[-1]")

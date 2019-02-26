@@ -6,9 +6,10 @@
 \usage{
 predict3d(fit, colorn = 20, maxylev = 6, se = FALSE,
   show.summary = FALSE, overlay = NULL, show.legend = FALSE,
-  bg = NULL, type = "s", radius = 1, palette = NULL,
-  palette.reverse = TRUE, show.plane = TRUE, plane.color = "blue",
-  plane.alpha = 0.1, show.lines = TRUE, ...)
+  bg = NULL, type = "s", radius = 2, palette = "Blues",
+  palette.reverse = TRUE, color = "red", show.subtitle = TRUE,
+  show.plane = TRUE, plane.color = "blue", plane.alpha = 0.1,
+  show.lines = TRUE, ...)
 }
 \arguments{
 \item{fit}{A model object for which prediction is desired.}
@@ -35,6 +36,10 @@ predict3d(fit, colorn = 20, maxylev = 6, se = FALSE,
 
 \item{palette.reverse}{Logical. Whether or not reverse the palette order}
 
+\item{color}{Default color. Color is used when the palette is NULL}
+
+\item{show.subtitle}{Logical. If true, show regression call as subtitle}
+
 \item{show.plane}{Logical. If true, show regression plane}
 
 \item{plane.color}{Name of color of regression plane}
@@ -49,11 +54,12 @@ predict3d(fit, colorn = 20, maxylev = 6, se = FALSE,
 Draw 3d predict plot using package `rgl`
 }
 \examples{
+require(rgl)
 fit=loess(mpg~hp*wt,data=mtcars)
 ggPredict(fit)
 predict3d(fit,radius=2)
-fit=lm(mpg~hp*wt,data=mtcars)
-predict3d(fit,radius=2,palette="Blues")
+fit=lm(mpg~hp*am,data=mtcars)
+predict3d(fit)
 require(moonBook)
 fit=lm(NTAV~age*weight,data=radial)
 fit=lm(NTAV~age*smoking,data=radial)
