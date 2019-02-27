@@ -103,5 +103,5 @@ rgl.snapshot("fig1.png")
 rgl.postscript("fig2.pdf","pdf")
 ```
 
-For more information about package `rgl`, please read the package vignette at: https://CRAN.R-project.org/package=rgl/vignettes/rgl.htmll 
+For more information about package `rgl`, please read the package vignette at: https://CRAN.R-project.org/package=rgl/vignettes/rgl.html
 

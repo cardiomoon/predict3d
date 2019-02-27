@@ -81,9 +81,9 @@ rank2colors=function(x,palette="Blues",reverse=TRUE,color="red"){
 #'predict3d(fit,radius=0.05)
 #'fit=lm(mpg~hp*wt,data=mtcars)
 #'predict3d(fit)
-#'require(TH.data)
-#'fit=glm(cens~pnodes*age,data=GBSG2,family=binomial)
-#'predict3d(fit)
+#'#require(TH.data)
+#'#fit=glm(cens~pnodes*age,data=GBSG2,family=binomial)
+#'#predict3d(fit)
 predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
           show.summary = FALSE, overlay=NULL,
           show.legend=FALSE,bg=NULL,type="s",radius=2,palette="Blues",palette.reverse=TRUE,
