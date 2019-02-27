@@ -76,9 +76,9 @@ rank2colors=function(x,palette="Blues",reverse=TRUE,color="red"){
 #' @importFrom plyr dlply "."
 #' @export
 #' @examples
-#' require(rgl)
-#'fit=lm(Sepal.Length~Sepal.Width*Species,data=iris)
-#'predict3d(fit,radius=0.05)
+#'# require(rgl)
+#'#fit=lm(Sepal.Length~Sepal.Width*Species,data=iris)
+#'#predict3d(fit,radius=0.05)
 #'#fit=lm(mpg~hp*wt,data=mtcars)
 #'#predict3d(fit)
 #'#require(TH.data)

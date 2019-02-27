@@ -144,7 +144,7 @@ fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod
 #'ggPredict(fit,hp)
 #'ggPredict(fit,hp,wt)
 #'fit=lm(mpg~hp*wt,data=mtcars)
-#'ggPredict(fit)
+#'ggPredict(fit,color="red")
 #'ggPredict(fit,labels=paste0("label",1:3),xpos=c(0.3,0.6,0.4))
 #'ggPredict(fit,se=TRUE)
 #'ggPredict(fit,mode=3,colorn=40,show.text=FALSE)
@@ -341,6 +341,7 @@ slope2angle=function(df,fit,predc,p,method="lm",xpos=NULL,vjust=NULL,digits=3,fa
     # digits=3;xpos=0.7
     #
     info=getAspectRatio(p)
+    # print(info)
     ratio=info$ratio
     if(!is.null(facetno)) ratio=ratio*facetno
     df$slope2=df$slope*ratio
