@@ -77,26 +77,13 @@ rank2colors=function(x,palette="Blues",reverse=TRUE,color="red"){
 #' @export
 #' @examples
 #' require(rgl)
-#'fit=loess(mpg~hp*wt,data=mtcars)
-#'ggPredict(fit)
 #'predict3d(fit,radius=2)
-#'fit=lm(mpg~hp*am,data=mtcars)
+#'fit=lm(Sepal.Length~Sepal.Width*Species,data=iris)
+#'predict3d(fit,radius=0.05)
+#'fit=lm(mpg~hp*wt,data=mtcars)
 #'predict3d(fit)
-#'require(moonBook)
-#'fit=lm(NTAV~age*weight,data=radial)
-#'fit=lm(NTAV~age*smoking,data=radial)
-#'fit=lm(NTAV~age*weight*smoking,data=radial)
-#'fit=lm(NTAV~age*smoking*DM,data=radial)
-#'predict3d(fit)
-#'predict3d(fit,overlay=TRUE)
 #'require(TH.data)
-#'fit=glm(cens~pnodes*horTh,data=GBSG2,family=binomial)
-#'fit=glm(cens~pnodes*age,data=GBSG2,family=binomial)
-#'predict3d(fit)
 #'fit=glm(cens~pnodes*age*horTh,data=GBSG2,family=binomial)
-#'predict3d(fit)
-#'fit=glm(cens~pnodes+age+horTh,data=GBSG2,family=binomial)
-#'predict3d(fit,overlay=TRUE)
 #'predict3d(fit)
 predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
           show.summary = FALSE, overlay=NULL,
@@ -111,7 +98,7 @@ predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
    # show.legend=FALSE;bg=NULL;type="s";radius=1
    # palette="Blues";palette.reverse=TRUE
    # show.plane=TRUE;plane.color="blue";plane.alpha=0.2;show.lines=TRUE
-    # show.subtitle=FALSE
+   # show.subtitle=FALSE
 
 
    myradius=radius
@@ -151,7 +138,6 @@ predict3d=function (fit, colorn = 20, maxylev=6, se = FALSE,
 
    predictors=c(xname,colorname,facetname)
    newdata2=fit2newdata(fit,predictors,mode=3,colorn=colorn,maxylev=maxylev)
-
 
    colorcount = length(unique(newdata2[[colorname]]))
    facetcount = ifelse(is.null(facetname),0,length(unique(newdata2[[facetname]])))

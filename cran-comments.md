@@ -1,4 +1,4 @@
-This is the resubmission of the package 'predict3d'
+This is the first submission of the package 'predict3d'
 
 ## Test environments
 * local OS X install, R 3.5.2
