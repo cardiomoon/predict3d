@@ -21,10 +21,19 @@ Description: Draw 2 dimensional and three dimensional plot for multiple
 
 PLease single quote with undirected quotes.
 
-
 ## Resubmission comment
 
 
 I have single quotted with undirected quotes.
 
-Thakn you very much !
+Thank you very much !
+
+## CRAN submission comment by Uwe Ligges
+
+Please reduce each example to less than 5 sec.
+
+## Re-submission comment
+
+I have reduced each example to less than 5 sec.
+
+Thank you very much for your time !
