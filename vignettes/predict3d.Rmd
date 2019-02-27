@@ -48,6 +48,8 @@ predict3d(fit1,radius=0.05)
 rglwidget(elementId = "1st")
 ```
 
+Once you have create a model with predict3d(), you can rotate, zoom in and zoom out your object with your mouse.
+
 The second model has two continuous variables as explanatory variables. You can change the labels and the relative x position and the y position.
 
 ```{r}
@@ -83,7 +85,7 @@ rglwidget(elementId = "4th")
 
 ## Play with predict3d()
 
-Once you have create a model with predict3d(), you can move your object with your mouse or R codes. For example, You can rotate you object with this R codes.
+Once you have create a model with predict3d(), you can rotate your object with your mouse or R codes. For example, You can rotate you object with this R codes.
 
 ```{r,eval=FALSE}
 start <- proc.time()[3]
