@@ -11,7 +11,7 @@ vignette: >
 
 
 
-R package `predict3d` aims to draw predicts plot for various regressiom models. The main two functions are ggPredict() for 2-dimensional plot and predict3d() for 3-dimensional plot.
+R package `predict3d` aims to draw predicts plot for various regression models. The main two functions are ggPredict() for 2-dimensional plot and predict3d() for 3-dimensional plot.
 
 ## Package Installation
 
@@ -25,7 +25,7 @@ devtools::install_github("cardiomoon/predict3d"")
 
 ## Linear Regression Models
 
-You can draw linear regression models. First model has one categorial and one continuous explanatory variables.
+You can draw linear regression models. First model has one categorical and one continuous explanatory variables.
 
 
 ```r
@@ -83,7 +83,7 @@ rglwidget(elementId = "2nd")
 
 ## Generalized Linear Models
 
-You can draw gemneralized linear models.
+You can draw generalized linear models.
 
 
 ```r

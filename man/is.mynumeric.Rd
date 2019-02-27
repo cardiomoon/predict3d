@@ -9,7 +9,7 @@ is.mynumeric(x, maxylev = 6)
 \arguments{
 \item{x}{A vector}
 
-\item{maxylev}{An integer indicating the maximum number of levels of numeric variable be treated as a categorial variable}
+\item{maxylev}{An integer indicating the maximum number of levels of numeric variable be treated as a categorical variable}
 }
 \description{
 Decide whether a vector can be treated as a numeric variable

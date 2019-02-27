@@ -24,7 +24,7 @@ slope2angle(df, fit, predc, p, method = "lm", xpos = NULL,
 
 \item{digits}{integer indicating the number of decimal places}
 
-\item{facetno}{Tne number of facets}
+\item{facetno}{The number of facets}
 
 \item{add.modx.values}{Whether add name of moderator variable}
 }

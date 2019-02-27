@@ -9,7 +9,7 @@ rank2group2(x, k = 4)
 \arguments{
 \item{x}{a numeric vector}
 
-\item{k}{a integer specifies how many groups you want to classifiy. default value is 4}
+\item{k}{a integer specifies how many groups you want to classify. default value is 4}
 }
 \description{
 Rank a numeric vector using proportional table and returns a new ordinal vector

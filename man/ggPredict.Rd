@@ -12,7 +12,7 @@ ggPredict(fit, pred = NULL, modx = NULL, mod2 = NULL,
   vjust = NULL, digits = 3, ...)
 }
 \arguments{
-\item{fit}{An object of calss "lm" or "glm"}
+\item{fit}{An object of class "lm" or "glm"}
 
 \item{pred}{The name of predictor variable}
 
@@ -26,9 +26,9 @@ ggPredict(fit, pred = NULL, modx = NULL, mod2 = NULL,
 
 \item{mode}{A  numeric. Useful when the variables are numeric. If 1, c(-1,0,1)*sd + mean is used. If 2, the 14th, 50th, 86th percentile values used. If 3 sequence over a the range of a vector used}
 
-\item{colorn}{The numer of regression lines when the modifier variable(s) are numeric.}
+\item{colorn}{The number of regression lines when the modifier variable(s) are numeric.}
 
-\item{maxylev}{An integer indicating the maximum number of levels of numeric variable be treated as a categorial variable}
+\item{maxylev}{An integer indicating the maximum number of levels of numeric variable be treated as a categorical variable}
 
 \item{show.point}{Logical. Whether or not add points}
 
@@ -50,7 +50,7 @@ ggPredict(fit, pred = NULL, modx = NULL, mod2 = NULL,
 
 \item{xpos}{x axis position of label}
 
-\item{vjust}{vertical aligment of labels}
+\item{vjust}{vertical alignment of labels}
 
 \item{digits}{integer indicating the number of decimal places}
 

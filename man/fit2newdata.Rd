@@ -8,7 +8,7 @@ fit2newdata(fit, predictors, mode = 1, pred.values = NULL,
   modx.values = NULL, mod2.values = NULL, colorn = 3, maxylev = 6)
 }
 \arguments{
-\item{fit}{An object of calss "lm" or "glm"}
+\item{fit}{An object of class "lm", "glm" or "loess"}
 
 \item{predictors}{Names of predictor variables in string}
 
@@ -20,9 +20,9 @@ fit2newdata(fit, predictors, mode = 1, pred.values = NULL,
 
 \item{mod2.values}{For which values of the second moderator should lines be plotted? Default is NULL. If NULL, then the customary +/- 1 standard deviation from the mean as well as the mean itself are used for continuous moderators. If the moderator is a factor variable and modx.values is NULL, each level of the factor is included.}
 
-\item{colorn}{The numer of regression lines when the modifier variable(s) are numeric.}
+\item{colorn}{The number of regression lines when the modifier variable(s) are numeric.}
 
-\item{maxylev}{An integer indicating the maximum number of levels of numeric variable be treated as a categorial variable}
+\item{maxylev}{An integer indicating the maximum number of levels of numeric variable be treated as a categorical variable}
 }
 \description{
 Make a new data set for prediction

@@ -16,7 +16,7 @@ predict3d(fit, colorn = 20, maxylev = 6, se = FALSE,
 
 \item{colorn}{An integer giving the desired number of intervals. Non-integer values are rounded down.}
 
-\item{maxylev}{Maximal length of unique values of y axis variable to be trreated as a categorical variable.}
+\item{maxylev}{Maximal length of unique values of y axis variable to be treated as a categorical variable.}
 
 \item{se}{Logical. Whether or not show se. Only effective when the y-axis variable is a categorical one.}
 

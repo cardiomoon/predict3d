@@ -2,7 +2,7 @@
 % Please edit documentation in R/predict3d.R
 \name{rank2colors}
 \alias{rank2colors}
-\title{Rank a numeric vector using proportional table and returns character vactor of names of color using palette}
+\title{Rank a numeric vector using proportional table and returns character vector of names of color using palette}
 \usage{
 rank2colors(x, palette = "Blues", reverse = TRUE, color = "red")
 }
@@ -16,7 +16,7 @@ rank2colors(x, palette = "Blues", reverse = TRUE, color = "red")
 \item{color}{Default color when palette is NULL}
 }
 \description{
-Rank a numeric vector using proportional table and returns character vactor of names of color using palette
+Rank a numeric vector using proportional table and returns character vector of names of color using palette
 }
 \examples{
 rank2colors(mtcars$hp,palette=NULL)

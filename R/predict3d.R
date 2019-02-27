@@ -10,7 +10,7 @@ myseq=function(x,length=20){
 #'Rank a numeric vector using proportional table and returns a new ordinal vector
 #'
 #'@param x a numeric vector
-#'@param k	a integer specifies how many groups you want to classifiy. default value is 4
+#'@param k	a integer specifies how many groups you want to classify. default value is 4
 #'
 #'@export
 rank2group2=function(x,k=4){
@@ -27,7 +27,7 @@ rank2group2=function(x,k=4){
    as.numeric(temp)
 }
 
-#'Rank a numeric vector using proportional table and returns character vactor of names of color using palette
+#'Rank a numeric vector using proportional table and returns character vector of names of color using palette
 #'@param x A numeric vector
 #'@param palette Name of the color palette
 #'@param reverse Logical. Whether or not reverse the order of the color palette
@@ -52,7 +52,7 @@ rank2colors=function(x,palette="Blues",reverse=TRUE,color="red"){
 #'
 #' @param fit A model object for which prediction is desired.
 #' @param colorn An integer giving the desired number of intervals. Non-integer values are rounded down.
-#' @param maxylev Maximal length of unique values of y axis variable to be trreated as a categorical variable.
+#' @param maxylev Maximal length of unique values of y axis variable to be treated as a categorical variable.
 #' @param se Logical. Whether or not show se. Only effective when the y-axis variable is a categorical one.
 #' @param show.summary Logical. Whether or not show statistical summary
 #' @param overlay Logical. Whether or not overlay plots

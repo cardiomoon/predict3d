@@ -1,20 +1,20 @@
 #' Decide whether a vector can be treated as a numeric variable
 #' @param x A vector
-#' @param maxylev An integer indicating the maximum number of levels of numeric variable be treated as a categorial variable
+#' @param maxylev An integer indicating the maximum number of levels of numeric variable be treated as a categorical variable
 #' @export
 is.mynumeric=function(x,maxylev=6){
     ifelse((is.numeric(x) & (length(unique(x))>maxylev)),TRUE,FALSE)
 }
 
 #' Make a new data set for prediction
-#'@param fit An object of calss "lm" or "glm"
+#'@param fit An object of class "lm", "glm" or "loess"
 #'@param predictors Names of predictor variables in string
 #'@param mode A numeric. Useful when the variables are numeric. If 1, c(-1,0,1)*sd + mean is used. If 2, the 14th, 50th, 86th percentile values used. If 3 sequence over a the range of a vector used
 #'@param pred.values For which values of the predictors should be used? Default is NULL. If NULL, 20 seq_range is used.
 #'@param modx.values For which values of the moderator should lines be plotted? Default is NULL. If NULL, then the customary +/- 1 standard deviation from the mean as well as the mean itself are used for continuous moderators. If the moderator is a factor variable and modx.values is NULL, each level of the factor is included.
 #'@param mod2.values For which values of the second moderator should lines be plotted? Default is NULL. If NULL, then the customary +/- 1 standard deviation from the mean as well as the mean itself are used for continuous moderators. If the moderator is a factor variable and modx.values is NULL, each level of the factor is included.
-#'@param colorn The numer of regression lines when the modifier variable(s) are numeric.
-#'@param maxylev An integer indicating the maximum number of levels of numeric variable be treated as a categorial variable
+#'@param colorn The number of regression lines when the modifier variable(s) are numeric.
+#'@param maxylev An integer indicating the maximum number of levels of numeric variable be treated as a categorical variable
 #'@importFrom prediction seq_range
 #'@importFrom tidyr crossing
 #'@importFrom magrittr "%>%"
@@ -110,15 +110,15 @@ fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod
 
 
 #' Visualize predictions from the multiple regression models.
-#'@param fit An object of calss "lm" or "glm"
+#'@param fit An object of class "lm" or "glm"
 #'@param pred The name of predictor variable
 #'@param modx Optional. The name of moderator variable
 #'@param mod2 Optional. The name of second moderator variable
 #'@param modx.values For which values of the moderator should lines be plotted? Default is NULL. If NULL, then the customary +/- 1 standard deviation from the mean as well as the mean itself are used for continuous moderators. If the moderator is a factor variable and modx.values is NULL, each level of the factor is included.
 #'@param mod2.values For which values of the second moderator should lines be plotted? Default is NULL. If NULL, then the customary +/- 1 standard deviation from the mean as well as the mean itself are used for continuous moderators. If the moderator is a factor variable and modx.values is NULL, each level of the factor is included.
 #'@param mode A  numeric. Useful when the variables are numeric. If 1, c(-1,0,1)*sd + mean is used. If 2, the 14th, 50th, 86th percentile values used. If 3 sequence over a the range of a vector used
-#'@param colorn The numer of regression lines when the modifier variable(s) are numeric.
-#'@param maxylev An integer indicating the maximum number of levels of numeric variable be treated as a categorial variable
+#'@param colorn The number of regression lines when the modifier variable(s) are numeric.
+#'@param maxylev An integer indicating the maximum number of levels of numeric variable be treated as a categorical variable
 #'@param show.point Logical. Whether or not add points
 #'@param jitter logical Whether or not use geom_jitter
 #'@param se Logical. Whether or not add confidence interval
@@ -129,7 +129,7 @@ fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod
 #'@param labels labels on regression lines
 #'@param angle angle of text
 #'@param xpos x axis position of label
-#'@param vjust vertical aligment of labels
+#'@param vjust vertical alignment of labels
 #'@param digits integer indicating the number of decimal places
 #'@param ... additional arguments to be passed to geom_text
 #'@importFrom rlang enquo "!!" quo_name enexpr
@@ -335,7 +335,7 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
 #'@param xpos The relative x-axis position of labels. Should be within 0 to 1
 #'@param vjust vjust
 #'@param digits integer indicating the number of decimal places
-#'@param facetno Tne number of facets
+#'@param facetno The number of facets
 #'@param add.modx.values Whether add name of moderator variable
 slope2angle=function(df,fit,predc,p,method="lm",xpos=NULL,vjust=NULL,digits=3,facetno=NULL,add.modx.values=TRUE){
     # digits=3;xpos=0.7
@@ -484,7 +484,7 @@ getNewFormula=function(fit,predictors=NULL){
 
 }
 
-#'Get aspect information og a ggplot
+#'Get aspect information of a ggplot
 #'@param p A ggplot object
 #'@importFrom ggplot2 layer_scales
 #'@export
