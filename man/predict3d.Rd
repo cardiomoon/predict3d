@@ -60,6 +60,6 @@ predict3d(fit,radius=0.05)
 fit=lm(mpg~hp*wt,data=mtcars)
 predict3d(fit)
 require(TH.data)
-fit=glm(cens~pnodes*age*horTh,data=GBSG2,family=binomial)
+fit=glm(cens~pnodes*age,data=GBSG2,family=binomial)
 predict3d(fit)
 }
