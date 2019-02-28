@@ -54,9 +54,9 @@ predict3d(fit, colorn = 20, maxylev = 6, se = FALSE,
 Draw 3d predict plot using package `rgl`
 }
 \examples{
-require(rgl)
-fit=lm(Sepal.Length~Sepal.Width*Species,data=iris)
-predict3d(fit,radius=0.05)
+# require(rgl)
+#fit=lm(Sepal.Length~Sepal.Width*Species,data=iris)
+#predict3d(fit,radius=0.05)
 #fit=lm(mpg~hp*wt,data=mtcars)
 #predict3d(fit)
 #require(TH.data)
