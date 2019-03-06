@@ -63,11 +63,11 @@ predict3d(fit, pred = NULL, modx = NULL, mod2 = NULL, width = 640,
 Draw 3d predict plot using package `rgl`
 }
 \examples{
-# require(rgl)
-fit=lm(Sepal.Length~Sepal.Width*Species,data=iris)
-predict3d(fit,radius=0.05)
 fit=lm(mpg~hp*wt,data=mtcars)
 predict3d(fit,show.error=TRUE)
+\donttest{
+fit=lm(Sepal.Length~Sepal.Width*Species,data=iris)
+predict3d(fit,radius=0.05)
 require(TH.data)
 fit=glm(cens~pnodes*age*horTh,data=GBSG2,family=binomial)
 predict3d(fit)
@@ -76,4 +76,5 @@ fit=lm(mpg~wt*engine,data=mtcars)
 predict3d(fit,radius=0.5)
 fit=loess(mpg~hp*wt,data=mtcars)
 predict3d(fit,radius=4)
+}
 }
