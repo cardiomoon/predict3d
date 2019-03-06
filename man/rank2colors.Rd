@@ -19,5 +19,5 @@ rank2colors(x, palette = "Blues", reverse = TRUE, color = "red")
 Rank a numeric vector using proportional table and returns character vector of names of color using palette
 }
 \examples{
-rank2colors(mtcars$hp,palette=NULL)
+rank2colors(mtcars$wt,palette="Blues")
 }

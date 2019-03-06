@@ -15,6 +15,6 @@ getNewFormula(fit, predictors = NULL)
 Make new formula
 }
 \examples{
-fit=lm(mpg~hp*wt*cyl+carb+am,data=mtcars)
-getNewFormula(fit,predictors=c("wt","cyl"))
+fit=lm(mpg~factor(cyl)*factor(am)+wt+carb,data=mtcars)
+getNewFormula(fit,predictors=c("am","wt"))
 }

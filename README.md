@@ -1,13 +1,5 @@
----
-title: "R package predict3d"
-author: "Keon-Woong Moon"
-date: "2019-02-27"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{predict3d}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
+predict3d <img src="inst/figures/imgfile.png" align="right" height="120" width="103.6"/>
+=======================================================================================
 
 
 

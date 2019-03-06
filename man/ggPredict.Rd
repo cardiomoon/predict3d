@@ -6,10 +6,11 @@
 \usage{
 ggPredict(fit, pred = NULL, modx = NULL, mod2 = NULL,
   modx.values = NULL, mod2.values = NULL, mode = 1, colorn = 3,
-  maxylev = 6, show.point = TRUE, jitter = NULL, se = FALSE,
-  alpha = 0.1, show.text = TRUE, add.modx.values = TRUE,
-  add.loess = FALSE, labels = NULL, angle = NULL, xpos = NULL,
-  vjust = NULL, digits = 3, ...)
+  maxylev = 6, show.point = TRUE, show.error = FALSE,
+  jitter = NULL, se = FALSE, alpha = 0.1, show.text = TRUE,
+  add.modx.values = TRUE, add.loess = FALSE, labels = NULL,
+  angle = NULL, xpos = NULL, vjust = NULL, digits = 2,
+  facet.modx = FALSE, facetbycol = TRUE, plot = TRUE, ...)
 }
 \arguments{
 \item{fit}{An object of class "lm" or "glm"}
@@ -31,6 +32,8 @@ ggPredict(fit, pred = NULL, modx = NULL, mod2 = NULL,
 \item{maxylev}{An integer indicating the maximum number of levels of numeric variable be treated as a categorical variable}
 
 \item{show.point}{Logical. Whether or not add points}
+
+\item{show.error}{Logical. Whether or not show error}
 
 \item{jitter}{logical Whether or not use geom_jitter}
 
@@ -54,6 +57,12 @@ ggPredict(fit, pred = NULL, modx = NULL, mod2 = NULL,
 
 \item{digits}{integer indicating the number of decimal places}
 
+\item{facet.modx}{Create separate panels for each level of the moderator? Default is FALSE}
+
+\item{facetbycol}{Logical.}
+
+\item{plot}{Logical. Should a plot of the results be printed? Default is TRUE.}
+
 \item{...}{additional arguments to be passed to geom_text}
 }
 \description{
@@ -62,25 +71,30 @@ Visualize predictions from the multiple regression models.
 \examples{
 fit=loess(mpg~hp*wt*am,data=mtcars)
 ggPredict(fit)
-#ggPredict(fit,hp)
-#ggPredict(fit,hp,wt)
-#fit=lm(mpg~hp*wt,data=mtcars)
-#ggPredict(fit,color="red")
-#ggPredict(fit,labels=paste0("label",1:3),xpos=c(0.3,0.6,0.4))
-#ggPredict(fit,se=TRUE)
-#ggPredict(fit,mode=3,colorn=40,show.text=FALSE)
-#fit=lm(mpg~hp*wt*cyl,data=mtcars)
-#ggPredict(fit,modx=wt,modx.values=c(2,3,4,5),mod2=cyl,show.text=FALSE)
-#ggPredict(fit,hp,wt,show.point=FALSE,se=TRUE,xpos=0.5)
-#ggPredict(fit,modx=wt,xpos=0.3)
-#ggPredict(fit)
-#require(TH.data)
-#fit=glm(cens~pnodes*horTh,data=GBSG2,family=binomial)
-#ggPredict(fit,pnodes,horTh,se=TRUE,xpos=c(0.6,0.3),angle=c(40,60),vjust=c(2,-0.5))
-#fit1=glm(cens~pnodes,data=GBSG2,family=binomial)
-#ggPredict(fit1,vjust=1.5,angle=45)
-#fit3=glm(cens~pnodes*age,data=GBSG2,family=binomial)
-#ggPredict(fit3,pred=pnodes,modx=age,mode=3,colorn=10,show.text=FALSE)
-#fit2=glm(cens~pnodes*age*horTh,data=GBSG2,family=binomial)
-#ggPredict(fit2,pred=pnodes,modx=age,mod2=horTh,mode=3,colorn=10,show.text=FALSE)
+ggPredict(fit,hp)
+ggPredict(fit,hp,wt)
+fit=lm(mpg~hp*wt,data=mtcars)
+ggPredict(fit)
+ggPredict(fit,labels=paste0("label",1:3),xpos=c(0.3,0.6,0.4))
+ggPredict(fit,se=TRUE)
+ggPredict(fit,mode=3,colorn=40,show.text=FALSE)
+fit=lm(mpg~hp*wt*cyl,data=mtcars)
+ggPredict(fit,modx=wt,modx.values=c(2,3,4,5),mod2=cyl,show.text=FALSE)
+ggPredict(fit,hp,wt,show.point=FALSE,se=TRUE,xpos=0.5)
+ggPredict(fit,modx=wt,xpos=0.3)
+ggPredict(fit)
+mtcars$engine=ifelse(mtcars$vs==0,"V-shaped","straight")
+fit=lm(mpg~wt*engine,data=mtcars)
+ggPredict(fit)
+require(TH.data)
+fit=glm(cens~pnodes*horTh,data=GBSG2,family=binomial)
+ggPredict(fit,pnodes,horTh,se=TRUE,xpos=c(0.6,0.3),angle=c(40,60),vjust=c(2,-0.5))
+fit1=glm(cens~pnodes,data=GBSG2,family=binomial)
+ggPredict(fit1,vjust=1.5,angle=45)
+fit3=glm(cens~pnodes*age,data=GBSG2,family=binomial)
+ggPredict(fit3,pred=pnodes,modx=age,mode=3,colorn=10,show.text=FALSE)
+fit2=glm(cens~pnodes*age*horTh,data=GBSG2,family=binomial)
+ggPredict(fit2,pred=pnodes,modx=age,mod2=horTh,mode=3,colorn=10,show.text=FALSE)
+fit=lm(mpg~log(hp)*wt,data=mtcars)
+ggPredict(fit,hp,wt)
 }

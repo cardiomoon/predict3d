@@ -23,7 +23,6 @@ PLease single quote with undirected quotes.
 
 ## Resubmission comment
 
-
 I have single quotted with undirected quotes.
 
 Thank you very much !
@@ -35,5 +34,38 @@ Please reduce each example to less than 5 sec.
 ## Re-submission comment
 
 I have reduced each example to less than 5 sec.
+
+
+## CRAN submission comment by Swetlana Herbrandt
+
+Thanks, please add a blank between words and parenthesis:
+models(lm) --> models (lm)
+
+Please do not capitalize "Fittings" in your Description text.
+
+Please do not comment out your examples and use \donttest{} instead:
+
+\examples{
+  examples for users and checks:
+  executable in < 5 sec
+
+  donttest{
+      further examples for users (not used for checks)
+  }
+}
+
+Please fix and resubmit.
+
+Best,
+Swetlana Herbrandt
+
+## Resubmission comment
+
+I have added a blank between words and parenthesis:
+models(lm) --> models (lm)
+
+I have changed "Fittings" --> "fittings" in Description text.
+
+I have used \donttest{} in my examples.
 
 Thank you very much for your time !

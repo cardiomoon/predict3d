@@ -4,15 +4,24 @@
 \alias{predict3d}
 \title{Draw 3d predict plot using package `rgl`}
 \usage{
-predict3d(fit, colorn = 20, maxylev = 6, se = FALSE,
-  show.summary = FALSE, overlay = NULL, show.legend = FALSE,
-  bg = NULL, type = "s", radius = 2, palette = "Blues",
+predict3d(fit, pred = NULL, modx = NULL, mod2 = NULL, width = 640,
+  colorn = 20, maxylev = 6, se = FALSE, show.summary = FALSE,
+  overlay = NULL, show.error = FALSE, show.legend = FALSE,
+  bg = NULL, type = "s", radius = 2, palette = NULL,
   palette.reverse = TRUE, color = "red", show.subtitle = TRUE,
-  show.plane = TRUE, plane.color = "blue", plane.alpha = 0.1,
-  show.lines = TRUE, ...)
+  show.plane = TRUE, plane.color = "steelblue", plane.alpha = 0.5,
+  ...)
 }
 \arguments{
 \item{fit}{A model object for which prediction is desired.}
+
+\item{pred}{The name of predictor variable}
+
+\item{modx}{Optional. The name of moderator variable}
+
+\item{mod2}{Optional. The name of second moderator variable}
+
+\item{width}{the width of device}
 
 \item{colorn}{An integer giving the desired number of intervals. Non-integer values are rounded down.}
 
@@ -23,6 +32,8 @@ predict3d(fit, colorn = 20, maxylev = 6, se = FALSE,
 \item{show.summary}{Logical. Whether or not show statistical summary}
 
 \item{overlay}{Logical. Whether or not overlay plots}
+
+\item{show.error}{Logical. Whether or not show error}
 
 \item{show.legend}{Logical. Whether or not show legend}
 
@@ -46,8 +57,6 @@ predict3d(fit, colorn = 20, maxylev = 6, se = FALSE,
 
 \item{plane.alpha}{Transparency scale of regression plane}
 
-\item{show.lines}{Logical. If true, show regression lines}
-
 \item{...}{additional parameters which will be passed to plot3d}
 }
 \description{
@@ -55,11 +64,16 @@ Draw 3d predict plot using package `rgl`
 }
 \examples{
 # require(rgl)
-#fit=lm(Sepal.Length~Sepal.Width*Species,data=iris)
-#predict3d(fit,radius=0.05)
-#fit=lm(mpg~hp*wt,data=mtcars)
-#predict3d(fit)
-#require(TH.data)
-#fit=glm(cens~pnodes*age,data=GBSG2,family=binomial)
-#predict3d(fit)
+fit=lm(Sepal.Length~Sepal.Width*Species,data=iris)
+predict3d(fit,radius=0.05)
+fit=lm(mpg~hp*wt,data=mtcars)
+predict3d(fit,show.error=TRUE)
+require(TH.data)
+fit=glm(cens~pnodes*age*horTh,data=GBSG2,family=binomial)
+predict3d(fit)
+mtcars$engine=ifelse(mtcars$vs==0,"V-shaped","straight")
+fit=lm(mpg~wt*engine,data=mtcars)
+predict3d(fit,radius=0.5)
+fit=loess(mpg~hp*wt,data=mtcars)
+predict3d(fit,radius=4)
 }

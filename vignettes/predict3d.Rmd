@@ -55,7 +55,7 @@ The second model has two continuous variables as explanatory variables. You can 
 ```{r}
 fit2=lm(mpg~wt*hp,data=mtcars)
 ggPredict(fit2,labels=paste0("label",1:3),xpos=c(0.3,0.4,0.3))
-predict3d(fit2,radius=3,palette=NULL,show.plane=FALSE)
+predict3d(fit2,radius=3,palette=NULL,show.error=TRUE)
 rglwidget(elementId = "2nd")
 
 ```
@@ -79,7 +79,7 @@ You can draw the loess model.
 ```{r}
 fit=loess(mpg~hp*wt,data=mtcars)
 ggPredict(fit)
-predict3d(fit,radius=2)
+predict3d(fit,radius=3)
 rglwidget(elementId = "4th")
 ```
 
@@ -99,9 +99,22 @@ You can save your 3d plot as a figure file or pdf file.
 
 ```{r,eval=FALSE}
 rgl.bringtotop()
-rgl.snapshot("fig1.png")
+rgl.snapshot("fig1.png")               
 rgl.postscript("fig2.pdf","pdf")
 ```
+
+You can make movie file with the following R command. You can get `movie.gif` file.
+
+```{r, eval=FALSE}
+movie3d(spin3d(axis = c(0, 0, 1)),dir=".", duration = 3,movie="movie")
+```
+
+You can export the plot into an interactive HTML file
+
+```{r,eval=FALSE}
+writeWebGL(filename = "index.html")
+```
+
 
 For more information about package `rgl`, please read the package vignette at: https://CRAN.R-project.org/package=rgl/vignettes/rgl.html
 
