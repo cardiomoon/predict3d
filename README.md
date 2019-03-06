@@ -1,4 +1,4 @@
-predict3d <img src="inst/figures/imgfile.png" align="right" height="120" width="103.6"/>
+R package predict3d <img src="inst/figures/imgfile.png" align="right" height="120" width="103.6"/>
 =======================================================================================
 
 
