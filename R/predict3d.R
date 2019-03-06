@@ -117,7 +117,6 @@ predict3d=function (fit, pred=NULL,modx=NULL,mod2=NULL,
    #   mtcars$engine=ifelse(mtcars$vs==0,"V-shaped","straight")
    #   fit=lm(mpg~wt*engine,data=mtcars)
    #  fit=lm(govact~negemot*age+posemot+ideology+sex,data=glbwarm)
-   #  fit=lm(NTAV~I(age^2)*sex,data=radial)
    # fit=lm(mpg~hp*wt,data=mtcars)
    #
    #  xname="hp"

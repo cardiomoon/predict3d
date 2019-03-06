@@ -25,7 +25,6 @@ Imports:
    magrittr,
    stats,
    TH.data,
-   moonBook,
    reshape2,
    plyr,
    tidyr
