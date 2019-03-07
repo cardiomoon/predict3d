@@ -5,3 +5,10 @@ predict3d version 0.1.0
 # New function ggPredict() and predict3d() added
 
 # New function fit2newdata() added
+
+
+predict3d version 0.1.1
+=======================
+(2019-Mar-7)
+
+# New function add_lines() added
