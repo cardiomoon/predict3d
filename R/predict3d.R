@@ -61,6 +61,7 @@ rank2colors=function(x,palette="Blues",reverse=TRUE,color="red"){
 #'@param pred The name of predictor variable
 #'@param modx Optional. The name of moderator variable
 #'@param mod2 Optional. The name of second moderator variable
+#'@param dep Optional. The name of dependent variable
 #' @param width the width of device
 #' @param colorn An integer giving the desired number of intervals. Non-integer values are rounded down.
 #' @param maxylev Maximal length of unique values of y axis variable to be treated as a categorical variable.
@@ -92,6 +93,8 @@ rank2colors=function(x,palette="Blues",reverse=TRUE,color="red"){
 #' @examples
 #'fit=lm(mpg~hp*wt,data=mtcars)
 #'predict3d(fit,show.error=TRUE)
+#'fit=lm(log(mpg)~hp*wt,data=mtcars)
+#'predict3d(fit,dep=mpg)
 #'\donttest{
 #'fit=lm(Sepal.Length~Sepal.Width*Species,data=iris)
 #'predict3d(fit,radius=0.05)
@@ -104,7 +107,7 @@ rank2colors=function(x,palette="Blues",reverse=TRUE,color="red"){
 #'fit=loess(mpg~hp*wt,data=mtcars)
 #'predict3d(fit,radius=4)
 #'}
-predict3d=function (fit, pred=NULL,modx=NULL,mod2=NULL,
+predict3d=function (fit, pred=NULL,modx=NULL,mod2=NULL,dep=NULL,
                     width=640,colorn = 20, maxylev=6, se = FALSE,
           show.summary = FALSE, overlay=NULL,show.error=FALSE,
           show.legend=FALSE,bg=NULL,type="s",radius=2,palette=NULL,palette.reverse=TRUE,
@@ -180,6 +183,10 @@ predict3d=function (fit, pred=NULL,modx=NULL,mod2=NULL,
                mod2<-NULL
                facetname<-NULL
           }
+     }
+     depc<-quo_name(enexpr(dep))
+     if(depc!="NULL"){
+          yname=depc
      }
 
 

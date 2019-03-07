@@ -4,13 +4,13 @@
 \alias{predict3d}
 \title{Draw 3d predict plot using package `rgl`}
 \usage{
-predict3d(fit, pred = NULL, modx = NULL, mod2 = NULL, width = 640,
-  colorn = 20, maxylev = 6, se = FALSE, show.summary = FALSE,
-  overlay = NULL, show.error = FALSE, show.legend = FALSE,
-  bg = NULL, type = "s", radius = 2, palette = NULL,
-  palette.reverse = TRUE, color = "red", show.subtitle = TRUE,
-  show.plane = TRUE, plane.color = "steelblue", plane.alpha = 0.5,
-  ...)
+predict3d(fit, pred = NULL, modx = NULL, mod2 = NULL, dep = NULL,
+  width = 640, colorn = 20, maxylev = 6, se = FALSE,
+  show.summary = FALSE, overlay = NULL, show.error = FALSE,
+  show.legend = FALSE, bg = NULL, type = "s", radius = 2,
+  palette = NULL, palette.reverse = TRUE, color = "red",
+  show.subtitle = TRUE, show.plane = TRUE, plane.color = "steelblue",
+  plane.alpha = 0.5, ...)
 }
 \arguments{
 \item{fit}{A model object for which prediction is desired.}
@@ -20,6 +20,8 @@ predict3d(fit, pred = NULL, modx = NULL, mod2 = NULL, width = 640,
 \item{modx}{Optional. The name of moderator variable}
 
 \item{mod2}{Optional. The name of second moderator variable}
+
+\item{dep}{Optional. The name of dependent variable}
 
 \item{width}{the width of device}
 
@@ -65,6 +67,8 @@ Draw 3d predict plot using package `rgl`
 \examples{
 fit=lm(mpg~hp*wt,data=mtcars)
 predict3d(fit,show.error=TRUE)
+fit=lm(log(mpg)~hp*wt,data=mtcars)
+predict3d(fit,dep=mpg)
 \donttest{
 fit=lm(Sepal.Length~Sepal.Width*Species,data=iris)
 predict3d(fit,radius=0.05)
