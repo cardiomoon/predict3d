@@ -453,8 +453,8 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     # temp1=restoreNames(temp1)
     exclude=c(predc,yvar,yvarOrig,restoreNames(yvar),"modxgroup","mod2group","se.fit","ymax","ymin")
     temp1=setdiff(names(fitted),exclude)
-    exclude1=which(str_detect(temp1,"factor\\("))
-    if(length(exclude1)>0) temp1=temp1[-exclude1]
+    # exclude1=which(str_detect(temp1,"factor\\("))
+    # if(length(exclude1)>0) temp1=temp1[-exclude1]
     temp1
     temp2=c()
     for(i in seq_along(temp1)){
@@ -464,24 +464,25 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
             temp2=c(temp2,temp1[i])
         }
     }
+    temp2
     if(length(temp2)>0){
-    temp2=paste0(temp2,collapse=",")
-    temp2=paste0("group_by(fitted,",temp2,")")
-    cat("names(fitted)=",names(fitted),"\n")
-    cat("exclude=",exclude,"\n")
-    cat("temp1=",temp2,"\n")
+    temp3=paste0(temp2,collapse=",")
+    temp3=paste0("group_by(fitted,",temp3,")")
+    # cat("names(fitted)=",names(fitted),"\n")
+    # cat("exclude=",exclude,"\n")
+    # cat("temp3=",temp3,"\n")
     fitted
 
-    fitted<-eval(parse(text=temp2))
+    fitted<-eval(parse(text=temp3))
     }
 
     # str(fitted)
     fitted
 
     predictors=unique(c(modxc,mod2c))
-
-    if(length(predictors)>0){
-         formulaString=getNewFormula(fit,predictors)
+    predictors2=c(predictors,setdiff(temp1,temp2))
+    if(length(predictors2)>0){
+         formulaString=getNewFormula(fit,predictors2)
 
          newFormula=as.formula(formulaString)
     } else{
@@ -489,7 +490,7 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
 
     }
      # fitted=data.frame(fitted)
-     # print(newFormula)
+      # print(newFormula)
 
 
    ##
@@ -642,7 +643,7 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
 slope2angle=function(df,fit,ytransform=0,predc,p,method="lm",xpos=NULL,vjust=NULL,digits=3,facetno=NULL,add.modx.values=TRUE){
      # digits=3;xpos=0.7
     # method="lm";xpos=NULL;vjust=NULL;digits=3;facetno=NULL;add.modx.values=TRUE
-    summary(fit)
+
     info=getAspectRatio(p)
     p
     # print(info)
@@ -763,7 +764,7 @@ slope2angle=function(df,fit,ytransform=0,predc,p,method="lm",xpos=NULL,vjust=NUL
     df$x=x
     df$y=y
     if(is.null(vjust)) {
-        if(count==1) vjust=0.5
+        if(count==1) vjust=-0.5
         else vjust=c(rep(-0.5,count-1),1.5)
     }
     df$vjust=vjust
