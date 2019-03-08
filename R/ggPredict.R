@@ -126,11 +126,13 @@ restoreNames=function(x){
 #'fit2newdata(lm(mpg~hp*wt,data=mtcars),predictors=c("hp","wt"),mode=3,colorn=30)
 #'fit=lm(mpg~hp*log(wt),data=mtcars)
 #'fit2newdata(fit,predictors=c("hp","log(wt)"))
+#'fit=lm(mpg~hp*wt*factor(vs),data=mtcars)
+#'fit2newdata(fit,predictors=c("hp"))
 #'}
 fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod2.values=NULL,colorn=3,maxylev=6){
 
      #  fit=lm(mpg~wt*hp*factor(vs),data=mtcars)
-     # predictors=c("wt","hp","factor(vs)")
+     # predictors=c("wt")
      # mode=1;pred.values=NULL;modx.values=NULL;mod2.values=NULL;colorn=3;maxylev=6
 
      predictors=restoreNames(predictors)
@@ -163,7 +165,7 @@ fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod
     select=setdiff(names(df),predictors)
 
     if(length(which(str_detect(select,"I\\(|factor\\(")))>0){
-           select=select[-which(str_detect(select,"I\\("))]
+           select=select[-which(str_detect(select,"I\\(|factor\\("))]
     }
     if(length(which(str_detect(select,"^log|^sqrt|^exp")))>0){
         select=select[-which(str_detect(select,"^log|^sqrt|^exp"))]
@@ -208,7 +210,7 @@ fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod
         newdf<-crossing(newdf,newdf3)
     }
 
-
+    newdf
     result <- predict(fit, newdata = newdf, type = "response",se=TRUE)
     # result <- predict(fit, newdata = newdf, type = "response",se.fit=TRUE)
      result
@@ -340,9 +342,9 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     # show.text=TRUE; add.modx.values=TRUE
     # labels=NULL;xpos=0.7;vjust=-0.5;digits=3
     # predictors=c("hp","engine")
-    # fit=lm(log(wt)~hp*cyl,data=mtcars)
-    # predc="hp";modxc="cyl";mod2c=NULL;jitter=NULL;show.error=FALSE
-    #  add.loess=FALSE;angle=NULL;facetbycol=FALSE;facet.modx=TRUE;colorn=30;mode=3
+    # fit=lm(mpg~hp*wt*factor(vs),data=mtcars)
+    # predc="hp";modxc=NULL;mod2c=NULL;jitter=NULL;show.error=FALSE
+    #  add.loess=FALSE;angle=NULL;facetbycol=TRUE;facet.modx=FALSE;colorn=3;mode=1
 
     method=class(fit)[1]
     if(method=="loess"){
@@ -390,6 +392,7 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     }
 
     depc <- quo_name(enexpr(dep))
+    yvarOrig<-yvar
     if(depc!="NULL"){
          yvar=depc
     }
@@ -437,18 +440,40 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     }
 
     fitted=newdata
-    fitted
     names(fitted)
-    tempcount=4
-    if(!is.null(modxc)) tempcount=tempcount+1
-    if(!is.null(mod2c)) tempcount=tempcount+1
-    temp1=setdiff(names(fitted)[1:(ncol(fitted)-tempcount)],predc)
-    temp1=paste0(temp1,collapse=",")
-    temp1=paste0("group_by(fitted,",temp1,")")
+
+    # tempcount=4
+    # if(!is.null(modxc)) tempcount=tempcount+1
+    # if(!is.null(mod2c)) tempcount=tempcount+1
+    # if(yvar!=yvarOrig) tempcount=tempcount+1
+    # tempcount
+
+    # temp1=setdiff(names(fitted)[1:(ncol(fitted)-tempcount)],predc)
+    # temp1=setdiff(predictors,predc)
+    # temp1=restoreNames(temp1)
+    exclude=c(predc,yvar,yvarOrig,restoreNames(yvar),"modxgroup","mod2group","se.fit","ymax","ymin")
+    temp1=setdiff(names(fitted),exclude)
+    exclude1=which(str_detect(temp1,"factor\\("))
+    if(length(exclude1)>0) temp1=temp1[-exclude1]
     temp1
+    temp2=c()
+    for(i in seq_along(temp1)){
+        if(!str_detect(temp1[i],"factor\\(")){
+            temp2=c(temp2,temp1[i])
+        } else if(length(unique(fitted[temp1[i]]))>1){
+            temp2=c(temp2,temp1[i])
+        }
+    }
+    if(length(temp2)>0){
+    temp2=paste0(temp2,collapse=",")
+    temp2=paste0("group_by(fitted,",temp2,")")
+    cat("names(fitted)=",names(fitted),"\n")
+    cat("exclude=",exclude,"\n")
+    cat("temp1=",temp2,"\n")
     fitted
 
-    fitted<-eval(parse(text=temp1))
+    fitted<-eval(parse(text=temp2))
+    }
 
     # str(fitted)
     fitted
@@ -463,8 +488,8 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
         newFormula=fit$terms
 
     }
-    # fitted=data.frame(fitted)
-    # print(newFormula)
+     # fitted=data.frame(fitted)
+     # print(newFormula)
 
 
    ##
@@ -554,7 +579,13 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     facetno
 
     fitted1<-fitted
-    fitted<-slope2angle(fitted,fit,predc,p,method=method,xpos=xpos,vjust=vjust,digits=digits,
+    ytransform=0
+    if(yvarOrig==paste0("log(",yvar,")")) {
+        ytransform=1
+    } else if(yvarOrig==paste0("exp(",yvar,")")) {
+        ytransform=-1
+    }
+    fitted<-slope2angle(fitted,fit,ytransform=ytransform,predc,p,method=method,xpos=xpos,vjust=vjust,digits=digits,
                         facetno=facetno,add.modx.values=add.modx.values)
     fitted
     if(!is.null(angle)) fitted$angle=angle
@@ -599,6 +630,7 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
 #'Make angle data with slope data
 #'@param df A data.frame
 #'@param fit An object of class "lm" or "glm"
+#'@param ytransform Numeric. If 1, log transformation of dependant variable, If -1, exponential teransformation
 #'@param predc Name of predictor variable
 #'@param p An object of class ggplot
 #'@param method String. Choices are one of "lm" and "glm".
@@ -607,9 +639,10 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
 #'@param digits integer indicating the number of decimal places
 #'@param facetno The number of facets
 #'@param add.modx.values Whether add name of moderator variable
-slope2angle=function(df,fit,predc,p,method="lm",xpos=NULL,vjust=NULL,digits=3,facetno=NULL,add.modx.values=TRUE){
-    # digits=3;xpos=0.7
-    #
+slope2angle=function(df,fit,ytransform=0,predc,p,method="lm",xpos=NULL,vjust=NULL,digits=3,facetno=NULL,add.modx.values=TRUE){
+     # digits=3;xpos=0.7
+    # method="lm";xpos=NULL;vjust=NULL;digits=3;facetno=NULL;add.modx.values=TRUE
+    summary(fit)
     info=getAspectRatio(p)
     p
     # print(info)
@@ -619,9 +652,14 @@ slope2angle=function(df,fit,predc,p,method="lm",xpos=NULL,vjust=NULL,digits=3,fa
     df$radian=atan(df$slope2)
     df$angle=df$radian*180/pi
     if(method=="lm"){
-    df$label=paste0(round(df$slope,digits),predc,
+        df$label=paste0(round(df$slope,digits),predc,
                     ifelse(df$intercept>=0," + "," - "),
                     round(df$intercept,digits))
+        if(ytransform==1) {
+            df$label=paste0("exp(",df$label,")")
+        } else if(ytransform==-1){
+            df$label=paste0("log(",df$label,")")
+        }
     } else if(method=="glm"){
 
     df$label=paste0("frac(1,1+ plain(e)^(-(",round(df$slope,digits),"*",predc,
@@ -660,7 +698,13 @@ slope2angle=function(df,fit,predc,p,method="lm",xpos=NULL,vjust=NULL,digits=3,fa
         y=c()
         for(i in seq_along(df$slope)){
         if(method=="lm"){
-           y=c(y,df$slope[i]*x[i]+df$intercept[i])
+           if(ytransform==1){
+               y=c(y,exp(df$slope[i]*x[i]+df$intercept[i]))
+           } else if(ytransform==-1){
+               y=c(y,log(df$slope[i]*x[i]+df$intercept[i]))
+           } else {
+               y=c(y,df$slope[i]*x[i]+df$intercept[i])
+           }
         }else if(method=="glm"){
             y=c(y,1/(1+exp(-(df$slope[i]*x[i]+df$intercept[i]))))
         } else{
@@ -676,7 +720,14 @@ slope2angle=function(df,fit,predc,p,method="lm",xpos=NULL,vjust=NULL,digits=3,fa
         y=c()
         for(i in seq_along(df$slope)){
             if(method=="lm"){
-                y=c(y,df$slope[i]*x[i]+df$intercept[i])
+                if(ytransform==1){
+                    y=c(y,exp(df$slope[i]*x[i]+df$intercept[i]))
+                } else if(ytransform==-1){
+                    y=c(y,log(df$slope[i]*x[i]+df$intercept[i]))
+                } else {
+                    y=c(y,df$slope[i]*x[i]+df$intercept[i])
+                }
+
             }else if(method=="glm"){
                 y=c(y,1/(1+exp(-(df$slope[i]*x[i]+df$intercept[i]))))
             } else{
@@ -692,7 +743,13 @@ slope2angle=function(df,fit,predc,p,method="lm",xpos=NULL,vjust=NULL,digits=3,fa
         y=c()
         for(i in seq_along(df$slope)){
             if(method=="lm"){
-                y=c(y,df$slope[i]*x[i]+df$intercept[i])
+                if(ytransform==1){
+                    y=c(y,exp(df$slope[i]*x[i]+df$intercept[i]))
+                } else if(ytransform==-1){
+                    y=c(y,log(df$slope[i]*x[i]+df$intercept[i]))
+                } else {
+                    y=c(y,df$slope[i]*x[i]+df$intercept[i])
+                }
             }else if(method=="glm"){
                 y=c(y,1/(1+exp(-(df$slope[i]*x[i]+df$intercept[i]))))
             } else{

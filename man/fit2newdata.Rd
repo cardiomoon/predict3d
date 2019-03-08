@@ -43,5 +43,7 @@ fit2newdata(fit,predictors=c("wt","vs"))
 fit2newdata(lm(mpg~hp*wt,data=mtcars),predictors=c("hp","wt"),mode=3,colorn=30)
 fit=lm(mpg~hp*log(wt),data=mtcars)
 fit2newdata(fit,predictors=c("hp","log(wt)"))
+fit=lm(mpg~hp*wt*factor(vs),data=mtcars)
+fit2newdata(fit,predictors=c("hp"))
 }
 }

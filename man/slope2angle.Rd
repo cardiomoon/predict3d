@@ -4,13 +4,16 @@
 \alias{slope2angle}
 \title{Make angle data with slope data}
 \usage{
-slope2angle(df, fit, predc, p, method = "lm", xpos = NULL,
-  vjust = NULL, digits = 3, facetno = NULL, add.modx.values = TRUE)
+slope2angle(df, fit, ytransform = 0, predc, p, method = "lm",
+  xpos = NULL, vjust = NULL, digits = 3, facetno = NULL,
+  add.modx.values = TRUE)
 }
 \arguments{
 \item{df}{A data.frame}
 
 \item{fit}{An object of class "lm" or "glm"}
+
+\item{ytransform}{Numeric. If 1, log transformation of dependant variable, If -1, exponential teransformation}
 
 \item{predc}{Name of predictor variable}
 
