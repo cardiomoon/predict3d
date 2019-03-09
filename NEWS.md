@@ -9,6 +9,8 @@ predict3d version 0.1.0
 
 predict3d version 0.1.1
 =======================
-(2019-Mar-8)
+(2019-Mar-9)
+
+# Bug-fixed
 
 # New function add_lines() added

@@ -189,6 +189,21 @@ predict3d=function (fit, pred=NULL,modx=NULL,mod2=NULL,dep=NULL,
           yname=depc
      }
 
+     predictors=c(xname,colorname,facetname)
+     if(checkVarname){
+          predictors=unique(restoreNames(predictors))
+          xname<-colorname<-facetname<-NULL
+          xname<-predictors[1]
+          if(length(predictors)>1){
+               colorname=predictors[2]
+          }
+          if(length(predictors)>2){
+               facetname=predictors[3]
+          }
+          predictors=c(xname,colorname,facetname)
+          # cat("predictors=",predictors,"\n")
+     }
+
 
      data=restoreData(rawdata)
      data=restoreData2(data)
@@ -219,10 +234,6 @@ predict3d=function (fit, pred=NULL,modx=NULL,mod2=NULL,dep=NULL,
    }
 
 
-
-
-   predictors=c(xname,colorname,facetname)
-  # cat("predictors=",predictors)
    newdata2=fit2newdata(fit,predictors,mode=3,colorn=colorn,maxylev=maxylev)
   newdata2
    colorcount = length(unique(newdata2[[colorname]]))

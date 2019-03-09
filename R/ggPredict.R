@@ -336,15 +336,16 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
                     facet.modx=FALSE,facetbycol=TRUE,plot=TRUE,...) {
 
 
-
-    # mod2=NULL;modx.values=NULL;mod2.values=NULL
-    # mode=1;colorn=3;maxylev=6;show.point=TRUE;se=FALSE;alpha=0.1
-    # show.text=TRUE; add.modx.values=TRUE
-    # labels=NULL;xpos=0.7;vjust=-0.5;digits=3
-    # predictors=c("hp","engine")
-    # fit=lm(mpg~hp*wt*factor(vs),data=mtcars)
-    # predc="hp";modxc=NULL;mod2c=NULL;jitter=NULL;show.error=FALSE
-    #  add.loess=FALSE;angle=NULL;facetbycol=TRUE;facet.modx=FALSE;colorn=3;mode=1
+#
+#     mod2=NULL;modx.values=NULL;mod2.values=NULL
+#     mode=1;colorn=3;maxylev=6;show.point=TRUE;se=FALSE;alpha=0.1
+#     show.text=TRUE; add.modx.values=TRUE
+#     labels=NULL;xpos=0.7;vjust=-0.5;digits=3
+#     predictors=c("hp","engine")
+#     fit=lm(mpg~log(hp)*wt*vs,data=mtcars)
+#      fit=lm(weight~I(height^2)+height+sex,data=radial)
+#      predc="I(height^2)";modxc="height";mod2c="sex";jitter=NULL;show.error=FALSE
+#      add.loess=FALSE;angle=NULL;facetbycol=TRUE;facet.modx=FALSE;colorn=3;mode=1
 
     method=class(fit)[1]
     if(method=="loess"){
@@ -398,8 +399,22 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     }
 
     predictors=c(predc,modxc,mod2c)
-     # cat("predictors=",predictors,"\n")
-
+    if(checkVarname){
+    predictors=unique(restoreNames(predictors))
+    predc<-modxc<-mod2c<-NULL
+    predc=predictors[1]
+    if(length(predictors)>1){
+         modxc=predictors[2]
+    }
+    if(length(predictors)>2){
+         modxc=predictors[3]
+    }
+    predictors=c(predc,modxc,mod2c)
+    # cat("predictors=",predictors,"\n")
+    }
+    predc
+    modxc
+    mod2c
     rawdata
     # rawdata=data.frame(rawdata)
     rawdata=restoreData(rawdata)
@@ -440,6 +455,7 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     }
 
     fitted=newdata
+    fitted
     names(fitted)
 
     # tempcount=4
@@ -451,16 +467,25 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     # temp1=setdiff(names(fitted)[1:(ncol(fitted)-tempcount)],predc)
     # temp1=setdiff(predictors,predc)
     # temp1=restoreNames(temp1)
+    # predc
     exclude=c(predc,yvar,yvarOrig,restoreNames(yvar),"modxgroup","mod2group","se.fit","ymax","ymin")
     temp1=setdiff(names(fitted),exclude)
     # exclude1=which(str_detect(temp1,"factor\\("))
     # if(length(exclude1)>0) temp1=temp1[-exclude1]
     temp1
+    exclude2=which(str_detect(temp1,paste0("\\(",predc)))
+    if(length(exclude2)>0) temp1=temp1[-exclude2]
+    exclude3=str_replace_all(predc,"^.*\\(|\\)","")
+    if(length(exclude3)>0) temp1=setdiff(temp1,exclude3)
     temp2=c()
     for(i in seq_along(temp1)){
-        if(!str_detect(temp1[i],"factor\\(")){
-            temp2=c(temp2,temp1[i])
-        } else if(length(unique(fitted[temp1[i]]))>1){
+        # if(!str_detect(temp1[i],"factor\\(")){
+        #     temp2=c(temp2,temp1[i])
+        # }
+
+        if(is.numeric(fitted[[temp1[i]]])){
+              temp2=c(temp2,temp1[i])
+        }else if(length(unique(fitted[[temp1[i]]]))>1){
             temp2=c(temp2,temp1[i])
         }
     }
@@ -490,10 +515,11 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
 
     }
      # fitted=data.frame(fitted)
-      # print(newFormula)
+       # print(newFormula)
 
 
    ##
+
     if(method=="lm") {
         fitted<-fitted %>% do(coef=lm(newFormula,data=.)$coef[1:2])
     } else if(method=="glm") {
@@ -503,6 +529,10 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     }
 
     fitted
+    temp4=setdiff(temp1,temp2)
+    for(i in seq_along(temp4)){
+         fitted[[temp4[i]]]=newdata[[temp4[[i]]]][1]
+    }
     coef=unlist(fitted$coef)
     coef
     fitted$intercept=coef[seq(1,by=2,length.out=nrow(fitted))]
@@ -514,7 +544,10 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     #     else xpos=0.5
     # }
 
-
+modxc
+predc
+yvar
+newdata
     if(is.null(modxc)){
     p<-ggplot(data=newdata,aes_string(x=predc,y=yvar))
     }  else {
@@ -585,6 +618,8 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
         ytransform=1
     } else if(yvarOrig==paste0("exp(",yvar,")")) {
         ytransform=-1
+    } else if(yvarOrig==paste0("sqrt(",yvar,")")) {
+         ytransform=0.5
     }
     fitted<-slope2angle(fitted,fit,ytransform=ytransform,predc,p,method=method,xpos=xpos,vjust=vjust,digits=digits,
                         facetno=facetno,add.modx.values=add.modx.values)
@@ -607,6 +642,9 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
         if(method=="lm"){
             p <- p+ geom_text(data=fitted,
                           aes_string(x="x",y="y",angle="angle",label="label",vjust="vjust"),...)
+            # p <- p+ geom_text(data=fitted,
+            #                   aes_string(x="x",y="y",angle="angle",label="label",vjust="vjust"))
+
 
         } else{
             p <- p+ geom_text(data=fitted,
@@ -653,17 +691,30 @@ slope2angle=function(df,fit,ytransform=0,predc,p,method="lm",xpos=NULL,vjust=NUL
     df$radian=atan(df$slope2)
     df$angle=df$radian*180/pi
     if(method=="lm"){
-        df$label=paste0(round(df$slope,digits),predc,
+        df$label=paste0(round(df$slope,digits),names(fit$model)[2])
+        if(str_detect(names(fit$model)[2],"I\\(")){
+             if(length(fit$coef)>2){
+                  for(j in 3:length(fit$coef)){
+                       if(names(fit$coef)[j]==restoreNames(names(fit$model)[2])){
+                            df$label=paste0(df$label,ifelse(fit$coef[j]>=0," + "," - "),
+                                            round(fit$coef[j],digits),names(fit$coef)[j])
+                       }
+                  }
+             }
+        }
+        df$label=paste0(df$label,
                     ifelse(df$intercept>=0," + "," - "),
                     round(df$intercept,digits))
         if(ytransform==1) {
             df$label=paste0("exp(",df$label,")")
         } else if(ytransform==-1){
             df$label=paste0("log(",df$label,")")
+        } else if(ytransform==0.5){
+             df$label=paste0("(",df$label,")^2")
         }
     } else if(method=="glm"){
 
-    df$label=paste0("frac(1,1+ plain(e)^(-(",round(df$slope,digits),"*",predc,
+    df$label=paste0("frac(1,1+ plain(e)^(-(",round(df$slope,digits),"*",names(fit$model)[2],
                     ifelse(df$intercept>=0,"+","-"),abs(round(df$intercept,digits)),")))")
 
     }
@@ -690,95 +741,111 @@ slope2angle=function(df,fit,ytransform=0,predc,p,method="lm",xpos=NULL,vjust=NUL
         }
     }
     count=nrow(df)
-    if(is.null(xpos)){
-        yrange=c()
-        xpos=c(0.3,0.7)
-        for(j in 1:2){
-        x=info$xmin+(info$xmax-info$xmin)*xpos[j]
-        x=rep(x,count)
-        y=c()
-        for(i in seq_along(df$slope)){
-        if(method=="lm"){
-           if(ytransform==1){
-               y=c(y,exp(df$slope[i]*x[i]+df$intercept[i]))
-           } else if(ytransform==-1){
-               y=c(y,log(df$slope[i]*x[i]+df$intercept[i]))
-           } else {
-               y=c(y,df$slope[i]*x[i]+df$intercept[i])
-           }
-        }else if(method=="glm"){
-            y=c(y,1/(1+exp(-(df$slope[i]*x[i]+df$intercept[i]))))
-        } else{
-             y=c(y,1)
-        }
-        }
-          yrange=c(yrange,max(y,na.rm=TRUE)-min(y,na.rm=TRUE))
-        }
-        # cat("yrange=",yrange,"\n")
-        select=which.max(yrange)
-        x=info$xmin+(info$xmax-info$xmin)*xpos[select]
-        x=rep(x,count)
-        y=c()
-        for(i in seq_along(df$slope)){
-            if(method=="lm"){
-                if(ytransform==1){
-                    y=c(y,exp(df$slope[i]*x[i]+df$intercept[i]))
-                } else if(ytransform==-1){
-                    y=c(y,log(df$slope[i]*x[i]+df$intercept[i]))
-                } else {
-                    y=c(y,df$slope[i]*x[i]+df$intercept[i])
-                }
+    # if(is.null(xpos)){
+    #     yrange=c()
+    #     xpos=c(0.3,0.7)
+    #     for(j in 1:2){
+    #     x=info$xmin+(info$xmax-info$xmin)*xpos[j]
+    #     x=rep(x,count)
+    #     y=c()
+    #     for(i in seq_along(df$slope)){
+    #     if(method=="lm"){
+    #        if(ytransform==1){
+    #            y=c(y,exp(df$slope[i]*x[i]+df$intercept[i]))
+    #        } else if(ytransform==-1){
+    #            y=c(y,log(df$slope[i]*x[i]+df$intercept[i]))
+    #        } else {
+    #            y=c(y,df$slope[i]*x[i]+df$intercept[i])
+    #        }
+    #     }else if(method=="glm"){
+    #         y=c(y,1/(1+exp(-(df$slope[i]*x[i]+df$intercept[i]))))
+    #     } else{
+    #          y=c(y,1)
+    #     }
+    #     }
+    #       yrange=c(yrange,max(y,na.rm=TRUE)-min(y,na.rm=TRUE))
+    #     }
+    #     # cat("yrange=",yrange,"\n")
+    #     select=which.max(yrange)
+    #     x=info$xmin+(info$xmax-info$xmin)*xpos[select]
+    #     x=rep(x,count)
+    #     y=c()
+    #     for(i in seq_along(df$slope)){
+    #         if(method=="lm"){
+    #             if(ytransform==1){
+    #                 y=c(y,exp(df$slope[i]*x[i]+df$intercept[i]))
+    #             } else if(ytransform==-1){
+    #                 y=c(y,log(df$slope[i]*x[i]+df$intercept[i]))
+    #             } else {
+    #                 y=c(y,df$slope[i]*x[i]+df$intercept[i])
+    #             }
+    #
+    #         }else if(method=="glm"){
+    #             y=c(y,1/(1+exp(-(df$slope[i]*x[i]+df$intercept[i]))))
+    #         } else{
+    #             y=c(y,1)
+    #         }
+    #     }
+    #
+    # } else{
+    #     x=info$xmin+(info$xmax-info$xmin)*xpos
+    #     if(length(xpos)==1){
+    #         x=rep(x,count)
+    #     }
+    #     y=c()
+    #     for(i in seq_along(df$slope)){
+    #         if(method=="lm"){
+    #             if(ytransform==1){
+    #                 y=c(y,exp(df$slope[i]*x[i]+df$intercept[i]))
+    #             } else if(ytransform==-1){
+    #                 y=c(y,log(df$slope[i]*x[i]+df$intercept[i]))
+    #             } else {
+    #                 y=c(y,df$slope[i]*x[i]+df$intercept[i])
+    #             }
+    #         }else if(method=="glm"){
+    #             y=c(y,1/(1+exp(-(df$slope[i]*x[i]+df$intercept[i]))))
+    #         } else{
+    #             y=c(y,1)
+    #         }
+    #     }
+    # }
 
-            }else if(method=="glm"){
-                y=c(y,1/(1+exp(-(df$slope[i]*x[i]+df$intercept[i]))))
-            } else{
-                y=c(y,1)
-            }
-        }
-
-    } else{
-        x=info$xmin+(info$xmax-info$xmin)*xpos
-        if(length(xpos)==1){
-            x=rep(x,count)
-        }
-        y=c()
-        for(i in seq_along(df$slope)){
-            if(method=="lm"){
-                if(ytransform==1){
-                    y=c(y,exp(df$slope[i]*x[i]+df$intercept[i]))
-                } else if(ytransform==-1){
-                    y=c(y,log(df$slope[i]*x[i]+df$intercept[i]))
-                } else {
-                    y=c(y,df$slope[i]*x[i]+df$intercept[i])
-                }
-            }else if(method=="glm"){
-                y=c(y,1/(1+exp(-(df$slope[i]*x[i]+df$intercept[i]))))
-            } else{
-                y=c(y,1)
-            }
-        }
-    }
-    y
     # print(x)
     # print(y)
+
+    if(is.null(xpos)) xpos=0.3
+    x=info$xmin+(info$xmax-info$xmin)*xpos
+    if(length(x)==1) x=rep(x,count)
+
     df$x=x
-    df$y=y
+
     if(is.null(vjust)) {
-        if(count==1) vjust=-0.5
-        else vjust=c(rep(-0.5,count-1),1.5)
+        vjust=rep(-0.5,count)
     }
     df$vjust=vjust
-    if(method=="loess"){
-
-         df[[predc]]=df$x
-
-         result <- predict(fit, newdata = df, type = "response",se=TRUE)
+    df[[predc]]=df$x
+    df=restoreData2(df)
+     result <- predict(fit, newdata = df, type = "response",se=TRUE)
          # result <- predict(fit, newdata = newdf, type = "response",se.fit=TRUE)
-         df$y<-result$fit
+     df$y<-result$fit
+
+     if(ytransform==1){
+          df$y=exp(df$y)
+     } else if(ytransform==-1){
+          df$y=log(df$y)
+     } else if(ytransform==0.5){
+          df$y=(df$y)^2
+     }
 
 
+
+    if(method!="lm") {
+         df$angle=0
+    } else if(predc!=names(fit$model)[2]){
+         df$angle=0
     }
-    if(method!="lm") df$angle=0
+
+
     attr(df,"ratio")=ratio
     # print(df)
     df

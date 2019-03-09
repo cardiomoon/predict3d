@@ -1,0 +1,66 @@
+---
+title: "R package predict3d"
+author: "Keon-Woong Moon"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = NA,
+  fig.height=6,
+  fig.width=6
+)
+```
+
+R package `predict3d` aims to draw predicts plot for various regression models. The main two functions are ggPredict() for 2-dimensional plot and predict3d() for 3-dimensional plot.
+
+# Package Installation
+
+You can install the `predict3d` package from CRAN.
+
+```{r,eval=FALSE}
+install.packages("predict3d")
+```
+
+
+You can install the developmental version of `predict3d` package from github.
+
+```{r,eval=FALSE}
+if(!require(devtools)) install.packages("devtools")
+devtools::install_github("cardiomoon/predict3d"")
+```
+
+# Linear Regression Models
+
+You can draw linear regression models. First model has one categorical and one continuous explanatory variables.
+
+```{r,message=FALSE}
+require(predict3d)
+require(rgl)
+
+fit1=lm(Sepal.Length~Sepal.Width*Species,data=iris)
+ggPredict(fit1,digits=1)
+```
+
+You can draw plot for this model. ggPredict() function draws a scatterplot with regression line and shows regression equations parallel to the regression lines.
+
+```{r}
+ggPredict(fit1,digits=1)
+```
+
+Once you have create a model with predict3d(), you can rotate, zoom in and zoom out your object with your mouse.
+
+The second model has two continuous variables as explanatory variables. You can change the labels and the relative x position and the y position.
+
+```{r}
+fit2=lm(mpg~wt*hp,data=mtcars)
+ggPredict(fit2,xpos=c(0.3,0.5,0.5))
+```
+
