@@ -13,7 +13,7 @@ getMeans=function(x){
      result
 }
 
-#'Convert a numeriv vector into groups
+#'Convert a numeric vector into groups
 #'@param x A numeric vector
 #'@param mode A numeric. If 1, mean(x) +c(-1,0,1)*sd(x) are used. If 2, quantile(x,probs=c(0.14,0.5,0.86),type=6) are used. If 3, values are used
 #'@param values A numeric vector
@@ -344,6 +344,7 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
 #     predictors=c("hp","engine")
 #     fit=lm(mpg~log(hp)*wt*vs,data=mtcars)
 #      fit=lm(weight~I(height^2)+height+sex,data=radial)
+#      fit=lm(mpg~hp*wt*vs,data=mtcars)
 #      predc="I(height^2)";modxc="height";mod2c="sex";jitter=NULL;show.error=FALSE
 #      add.loess=FALSE;angle=NULL;facetbycol=TRUE;facet.modx=FALSE;colorn=3;mode=1
 
@@ -407,10 +408,10 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
          modxc=predictors[2]
     }
     if(length(predictors)>2){
-         modxc=predictors[3]
+         mod2c=predictors[3]
     }
     predictors=c(predc,modxc,mod2c)
-    # cat("predictors=",predictors,"\n")
+     #cat("predictors=",predictors,"\n")
     }
     predc
     modxc
@@ -669,7 +670,7 @@ newdata
 #'Make angle data with slope data
 #'@param df A data.frame
 #'@param fit An object of class "lm" or "glm"
-#'@param ytransform Numeric. If 1, log transformation of dependant variable, If -1, exponential teransformation
+#'@param ytransform Numeric. If 1, log transformation of dependent variable, If -1, exponential transformation
 #'@param predc Name of predictor variable
 #'@param p An object of class ggplot
 #'@param method String. Choices are one of "lm" and "glm".

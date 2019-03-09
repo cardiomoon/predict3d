@@ -2,7 +2,7 @@
 % Please edit documentation in R/ggPredict.R
 \name{number2group}
 \alias{number2group}
-\title{Convert a numeriv vector into groups}
+\title{Convert a numeric vector into groups}
 \usage{
 number2group(x, mode = 1, values = NULL, silent = FALSE,
   label = "label", digits = 2, colorn = 3)
@@ -23,7 +23,7 @@ number2group(x, mode = 1, values = NULL, silent = FALSE,
 \item{colorn}{The number of regression lines when the modifier variable(s) are numeric}
 }
 \description{
-Convert a numeriv vector into groups
+Convert a numeric vector into groups
 }
 \examples{
 number2group(iris$Sepal.Length,label="Sepal.Length")

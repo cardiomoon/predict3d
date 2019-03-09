@@ -13,7 +13,7 @@ slope2angle(df, fit, ytransform = 0, predc, p, method = "lm",
 
 \item{fit}{An object of class "lm" or "glm"}
 
-\item{ytransform}{Numeric. If 1, log transformation of dependant variable, If -1, exponential teransformation}
+\item{ytransform}{Numeric. If 1, log transformation of dependent variable, If -1, exponential transformation}
 
 \item{predc}{Name of predictor variable}
 

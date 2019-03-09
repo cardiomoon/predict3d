@@ -142,3 +142,6 @@ rgl.postscript("fig2.pdf","pdf")
 
 For more information about package `rgl`, please read the package vignette at: https://CRAN.R-project.org/package=rgl/vignettes/rgl.html
 
+You can see the following vignettes published on rpubs.com
+
+[Drawing the multiple regression models(Part I)](http://rpubs.com/cardiomoon/474707)
