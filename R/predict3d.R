@@ -196,6 +196,8 @@ predict3d=function (fit, pred=NULL,modx=NULL,mod2=NULL,dep=NULL,
           xname<-predictors[1]
           if(length(predictors)>1){
                colorname=predictors[2]
+          } else{
+               colorname=names(fit$model)[5]
           }
           if(length(predictors)>2){
                facetname=predictors[3]

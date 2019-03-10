@@ -91,6 +91,50 @@ restoreNames=function(x){
      temp
 }
 
+#'change string to pattern
+#'@param string A character vector
+#'@export
+#'@examples
+#'string=c("I(age^2)","factor(cyl)","log(mpg)")
+#'string2pattern(string)
+string2pattern=function(string){
+     string=str_replace_all(string,"\\(","\\\\(")
+     string=str_replace_all(string,"\\)","\\\\)")
+     string=str_replace_all(string,"\\^","\\\\^")
+     string
+}
+
+#'Find variable names in data.frame
+#'@param vars variable names to find
+#'@param df A data.frame
+#'@return A character vector
+#'@export
+seekNamesDf=function(vars,df){
+    namesDf=names(df)
+    result=c()
+    vars
+    namesDf
+
+    for( i in seq_along(vars)){
+         if(vars[i] %in% namesDf){
+              result=c(result,vars[i])
+         } else{
+              select=which(str_detect(namesDf,paste0(".*\\(",vars[i],"\\^|.*\\(",vars[i],"\\)")))
+              if(length(select)>0){
+                 result=c(result,namesDf[select])
+              } else{  ## find factor
+                    factorVars=names(which(unlist(lapply(df,is.factor))))
+                    for(j in seq_along(factorVars)){
+                         temp=string2pattern(factorVars[j])
+                         if(str_detect(vars[i],temp)) result=c(result,factorVars[j])
+                    }
+
+              }
+         }
+    }
+    result=unique(result)
+    result
+}
 
 #' Make a new data set for prediction
 #'@param fit An object of class "lm", "glm" or "loess"
@@ -327,6 +371,11 @@ fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod
 #'ggPredict(fit2,pred=pnodes,modx=age,mod2=horTh,mode=3,colorn=10,show.text=FALSE)
 #'fit=lm(mpg~log(hp)*wt,data=mtcars)
 #'ggPredict(fit,hp,wt)
+#'fit=lm(mpg~hp*wt+disp+gear+carb+am,data=mtcars)
+#'ggPredict(fit,disp,gear,am)
+#'fit=lm(weight~I(height^3)+I(height^2)+height+sex,data=radial)
+#'ggPredict(fit)
+#'predict3d(fit)
 #'}
 ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.values=NULL,
                    dep=NULL,mode=1,colorn=3,maxylev=6,show.point=TRUE,show.error=FALSE,
@@ -336,17 +385,20 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
                     facet.modx=FALSE,facetbycol=TRUE,plot=TRUE,...) {
 
 
-#
-#     mod2=NULL;modx.values=NULL;mod2.values=NULL
-#     mode=1;colorn=3;maxylev=6;show.point=TRUE;se=FALSE;alpha=0.1
-#     show.text=TRUE; add.modx.values=TRUE
-#     labels=NULL;xpos=0.7;vjust=-0.5;digits=3
-#     predictors=c("hp","engine")
-#     fit=lm(mpg~log(hp)*wt*vs,data=mtcars)
-#      fit=lm(weight~I(height^2)+height+sex,data=radial)
-#      fit=lm(mpg~hp*wt*vs,data=mtcars)
-#      predc="I(height^2)";modxc="height";mod2c="sex";jitter=NULL;show.error=FALSE
-#      add.loess=FALSE;angle=NULL;facetbycol=TRUE;facet.modx=FALSE;colorn=3;mode=1
+
+    # mod2=NULL;modx.values=NULL;mod2.values=NULL
+    # mode=1;colorn=3;maxylev=6;show.point=TRUE;se=FALSE;alpha=0.1
+    # show.text=TRUE; add.modx.values=TRUE
+    # labels=NULL;xpos=0.7;vjust=-0.5;digits=3
+    # predictors=c("hp","engine")
+    # fit=lm(mpg~log(hp)*wt*vs,data=mtcars)
+    # fit=lm(weight~I(height^3)+I(height^2)+height+sex,data=radial)
+    #
+    #  fit=lm(mpg~hp*wt*vs,data=mtcars)
+    # fit=lm(NTAV~I(age^2)+sex-1,data=radial)
+    # fit=lm(mpg~hp*wt+disp+gear+carb+am,data=mtcars)
+    # predc="height";modxc="sex";mod2c=NULL;jitter=NULL;show.error=FALSE
+    #  add.loess=FALSE;angle=NULL;facetbycol=TRUE;facet.modx=FALSE;colorn=3;mode=1
 
     method=class(fit)[1]
     if(method=="loess"){
@@ -394,6 +446,7 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     }
 
     depc <- quo_name(enexpr(dep))
+
     yvarOrig<-yvar
     if(depc!="NULL"){
          yvar=depc
@@ -411,8 +464,9 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
          mod2c=predictors[3]
     }
     predictors=c(predc,modxc,mod2c)
-     #cat("predictors=",predictors,"\n")
+    # cat("predictors=",predictors,"\n")
     }
+      # cat("predictors=",predictors,"\n")
     predc
     modxc
     mod2c
@@ -458,6 +512,7 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     fitted=newdata
     fitted
     names(fitted)
+
 
     # tempcount=4
     # if(!is.null(modxc)) tempcount=tempcount+1
@@ -507,26 +562,35 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
 
     predictors=unique(c(modxc,mod2c))
     predictors2=c(predictors,setdiff(temp1,temp2))
+    predictors2
+
     if(length(predictors2)>0){
          formulaString=getNewFormula(fit,predictors2)
-
          newFormula=as.formula(formulaString)
     } else{
         newFormula=fit$terms
 
     }
      # fitted=data.frame(fitted)
-       # print(newFormula)
+          # print(newFormula)
 
 
-   ##
+    fitted
+    ## polynomial
 
-    if(method=="lm") {
-        fitted<-fitted %>% do(coef=lm(newFormula,data=.)$coef[1:2])
-    } else if(method=="glm") {
-        fitted<-fitted %>% do(coef=glm(newFormula,data=.,family=fit$family$family)$coef[1:2])
+    polynames=names(fit$model)[which(str_detect(names(fit$model),paste0("I\\(",predc,"\\^")))]
+    polynames
+    if(length(polynames)>0){
+         temppredc=sort(polynames,decreasing=TRUE)[1]
     } else{
-        fitted<-fitted %>% do(coef=lm(newFormula,data=.)$coef[1:2])
+         temppredc=predc
+    }
+    if(method=="lm") {
+        fitted<-fitted %>% do(coef= lm(newFormula,data=.)$coef[c("(Intercept)",temppredc)])
+    } else if(method=="glm") {
+        fitted<-fitted %>% do(coef=glm(newFormula,data=.,family=fit$family$family)$coef[c("(Intercept)",temppredc)])
+    } else{
+        fitted<-fitted %>% do(coef=lm(newFormula,data=.)$coef[c("(Intercept)",temppredc)])
     }
 
     fitted
@@ -539,6 +603,14 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     fitted$intercept=coef[seq(1,by=2,length.out=nrow(fitted))]
     fitted$slope=coef[seq(2,by=2,length.out=nrow(fitted))]
 
+    if(method!="loess"){
+         if((names(fit$coef)[1]!="(Intercept)")){
+           fitted$intercept=0
+           fitted$slope=coef[seq(1,by=2,length.out=nrow(fitted))]
+         }
+    }
+
+
     # if(is.null(xpos)){
     #     if(method=="lm") xpos=0.7
     #     else if(method=="glm") xpos=0.4
@@ -549,6 +621,7 @@ modxc
 predc
 yvar
 newdata
+fitted
     if(is.null(modxc)){
     p<-ggplot(data=newdata,aes_string(x=predc,y=yvar))
     }  else {
@@ -622,7 +695,8 @@ newdata
     } else if(yvarOrig==paste0("sqrt(",yvar,")")) {
          ytransform=0.5
     }
-    fitted<-slope2angle(fitted,fit,ytransform=ytransform,predc,p,method=method,xpos=xpos,vjust=vjust,digits=digits,
+    fitted
+    fitted<-slope2angle(fitted,fit,ytransform=ytransform,predc,modxc,p,method=method,xpos=xpos,vjust=vjust,digits=digits,
                         facetno=facetno,add.modx.values=add.modx.values)
     fitted
     if(!is.null(angle)) fitted$angle=angle
@@ -672,6 +746,7 @@ newdata
 #'@param fit An object of class "lm" or "glm"
 #'@param ytransform Numeric. If 1, log transformation of dependent variable, If -1, exponential transformation
 #'@param predc Name of predictor variable
+#'@param modxc Name of moderator variable
 #'@param p An object of class ggplot
 #'@param method String. Choices are one of "lm" and "glm".
 #'@param xpos The relative x-axis position of labels. Should be within 0 to 1
@@ -679,7 +754,7 @@ newdata
 #'@param digits integer indicating the number of decimal places
 #'@param facetno The number of facets
 #'@param add.modx.values Whether add name of moderator variable
-slope2angle=function(df,fit,ytransform=0,predc,p,method="lm",xpos=NULL,vjust=NULL,digits=3,facetno=NULL,add.modx.values=TRUE){
+slope2angle=function(df,fit,ytransform=0,predc,modxc,p,method="lm",xpos=NULL,vjust=NULL,digits=3,facetno=NULL,add.modx.values=TRUE){
      # digits=3;xpos=0.7
     # method="lm";xpos=NULL;vjust=NULL;digits=3;facetno=NULL;add.modx.values=TRUE
 
@@ -691,21 +766,32 @@ slope2angle=function(df,fit,ytransform=0,predc,p,method="lm",xpos=NULL,vjust=NUL
     df$slope2=df$slope*ratio
     df$radian=atan(df$slope2)
     df$angle=df$radian*180/pi
+
     if(method=="lm"){
-        df$label=paste0(round(df$slope,digits),names(fit$model)[2])
-        if(str_detect(names(fit$model)[2],"I\\(")){
-             if(length(fit$coef)>2){
-                  for(j in 3:length(fit$coef)){
-                       if(names(fit$coef)[j]==restoreNames(names(fit$model)[2])){
-                            df$label=paste0(df$label,ifelse(fit$coef[j]>=0," + "," - "),
-                                            round(fit$coef[j],digits),names(fit$coef)[j])
-                       }
+        df$label=paste0(round(df$slope,digits),predc)
+        polynames=names(fit$model)[which(str_detect(names(fit$model),paste0("I\\(",predc,"\\^")))]
+        if(length(polynames)>0){
+             polynames=sort(polynames,decreasing=TRUE)
+             polynames
+             res=paste0(round(fit$coef[polynames[1]],digits),
+                        str_replace_all(names(fit$model)[2],"I\\(|\\)$",""))
+             if(length(polynames)>1){
+                  for( i in 2:length(polynames)){
+                       no=fit$coef[polynames[i]]
+                       res=paste0(res,ifelse(no>=0," + "," - "),round(abs(no),digits),
+                                  str_replace_all(polynames[i],"I\\(|\\)$",""))
                   }
              }
+             if(predc %in% names(fit$coef)){
+             no=fit$coef[predc]
+             res=paste0(res,ifelse(no>=0," + "," - "),round(abs(no),digits),predc)
+             }
+             df$label=res
+
         }
         df$label=paste0(df$label,
-                    ifelse(df$intercept>=0," + "," - "),
-                    round(df$intercept,digits))
+                    ifelse(df$intercept==0,"",ifelse(df$intercept>0," + "," - ")),
+                    ifelse(df$intercept==0,"",round(abs(df$intercept),digits)))
         if(ytransform==1) {
             df$label=paste0("exp(",df$label,")")
         } else if(ytransform==-1){
@@ -715,7 +801,7 @@ slope2angle=function(df,fit,ytransform=0,predc,p,method="lm",xpos=NULL,vjust=NUL
         }
     } else if(method=="glm"){
 
-    df$label=paste0("frac(1,1+ plain(e)^(-(",round(df$slope,digits),"*",names(fit$model)[2],
+    df$label=paste0("frac(1,1+ plain(e)^(-(",round(df$slope,digits),"*",predc,
                     ifelse(df$intercept>=0,"+","-"),abs(round(df$intercept,digits)),")))")
 
     }
@@ -730,7 +816,9 @@ slope2angle=function(df,fit,ytransform=0,predc,p,method="lm",xpos=NULL,vjust=NUL
     if(add.modx.values) {
         if(method=="lm"){
         if(colnames(df)[1]!="coef"){
-        df$label=paste0(df$label," | ",colnames(df)[1]," = ",df$labels2)
+             if(!is.null(modxc)){
+                df$label=paste0(df$label," | ",modxc," = ",df$labels2)
+             }
         }
         }
     }
@@ -860,29 +948,66 @@ slope2angle=function(df,fit,ytransform=0,predc,p,method="lm",xpos=NULL,vjust=NUL
 #'@export
 #'@examples
 #'fit=lm(mpg~factor(cyl)*factor(am)+wt+carb,data=mtcars)
-#'getNewFormula(fit,predictors=c("am","wt"))
+#'getNewFormula(fit,predictors=c("cyl","wt"))
+#'fit=lm(Sepal.Length~Sepal.Width*Petal.Length+Species,data=iris)
+#'getNewFormula(fit,predictors=c("Petal.Length"))
+#'fit=lm(mpg~hp*wt*factor(cyl),data=mtcars)
+#'getNewFormula(fit,predictors=c("hp","cyl"))
+#'fit=loess(mpg~hp*wt,data=mtcars)
+#'getNewFormula(fit,predictors=c("hp","wt"))
 getNewFormula=function(fit,predictors=NULL){
     # predictors<-NULL
-     # predictors=c("am","wt")
-     predictors=str_replace(predictors,".*\\(","")
-     predictors=str_replace(predictors,"\\)","")
+     # predictors=c("wt")
+      # predictors=c("Species")
+      # predictors=c("wt","cyl")
+       # predictors=c("Petal.Length")
+        # predictors=c("hp","wt")
+      # fit$call
+     predictors=str_replace_all(predictors,".*\\(|\\)","")
 
      if("loess" %in% class(fit)){
           temp=attr(fit$terms,"term.labels")
           yvar=attr(attr(fit$terms,"factors"),"dimnames")[[1]][1]
      } else{
-          temp=names(fit$coef)[-1]
+          if(names(fit$coef)[1]=="(Intercept)") {
+               temp=names(fit$coef)[-1]
+          } else {
+               temp=names(fit$coef)
+          }
           yvar=names(fit$model)[1]
      }
-     temp=str_replace_all(temp,"\\)[:alnum:]*","\\)")
-     temp=unique(temp)
-    for( i in seq_along(predictors)){
-        select=which(!str_detect(temp,predictors[i]))
-        select
+     temp
+     exclude=c()
+     if("loess" %in% class(fit)){
+          df=cbind(fit$y,data.frame(fit$x))
+     } else {
+          df=fit$model
+     }
+     predictors=seekNamesDf(predictors,df)
+     predictors
+     for(i in seq_along(predictors)){
+          if(!is.factor(df[[predictors[i]]])){
+               exclude=c(exclude,predictors[i])
+          } else{
+               mylevels=levels(df[[predictors[i]]])
+               exclude=c(exclude,paste0(predictors[i],mylevels))
+          }
+     }
+     exclude
+     exclude=string2pattern(exclude)
+     for( i in seq_along(exclude)){
+        select=which(!str_detect(temp,exclude[i]))
         temp=temp[select]
     }
+    temp
+    df
+
+    temp=seekNamesDf(temp,df)
 
     result=paste0(yvar,"~",paste(temp,collapse="+"))
+    if(!("loess" %in% class(fit))){
+          if(names(fit$coef)[1]!="(Intercept)") result=paste0(result,"-1")
+    }
     result
 
 }

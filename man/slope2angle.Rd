@@ -4,7 +4,7 @@
 \alias{slope2angle}
 \title{Make angle data with slope data}
 \usage{
-slope2angle(df, fit, ytransform = 0, predc, p, method = "lm",
+slope2angle(df, fit, ytransform = 0, predc, modxc, p, method = "lm",
   xpos = NULL, vjust = NULL, digits = 3, facetno = NULL,
   add.modx.values = TRUE)
 }
@@ -16,6 +16,8 @@ slope2angle(df, fit, ytransform = 0, predc, p, method = "lm",
 \item{ytransform}{Numeric. If 1, log transformation of dependent variable, If -1, exponential transformation}
 
 \item{predc}{Name of predictor variable}
+
+\item{modxc}{Name of moderator variable}
 
 \item{p}{An object of class ggplot}
 

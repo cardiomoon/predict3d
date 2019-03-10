@@ -23,6 +23,7 @@ Imports:
    rlang,
    stringr,
    magrittr,
+   moonBook,
    stats,
    TH.data,
    reshape2,

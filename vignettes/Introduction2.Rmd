@@ -1,0 +1,96 @@
+---
+title: "Drawing the Multiple Regression Models"
+subtitle: "Part II. Transforming Variables"
+author: "Keon-Woong Moon"
+date: "`r Sys.Date()`"
+vignette: >
+  %\VignetteIndexEntry{predict3d}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = NA,
+  message=FALSE,
+  warning=FALSE,
+  fig.height=6,
+  fig.width=6,
+  out.width="70%",
+  fig.align="center"
+)
+```
+
+
+R package **predict3d** aims to draw predicts plot for various regression models. This is package vignette part 2. If you are unfamiliar to `predict3d`, please read the vignette [Part I. From Simple to Multiple Regression](http://rpubs.com/cardiomoon/474707).
+
+
+## Models With More Than Three Explanatory Variables
+
+You can make multiple regression model with more than three explanatory variables.
+
+```{r pressure, echo=FALSE}
+library(predict3d)
+library(rgl)
+
+fit=lm(mpg~hp*wt+am+disp+gear+carb,data=mtcars)
+summary(fit)
+```
+
+You can draw this model with ggPredict(). When calling this function, you can specify up to three predictor variables. The first predictor variable can be specified by the `pred` argument, which is used as an x-axis variable. The second variable can be specified with the `modx` argument and is used as a color variable. The third variable can be specified with the `mod2` argument and is used as a facetting variable. If you do not specify any predictor variables, ggPredict() function automatically use up to three predictors in the regression model. The following two R codes make the same plot. 
+
+
+```{r,out.width="49%",fig.show='hold',fig.align='default'}
+ggPredict(fit)  
+ggPredict(fit,pred=hp,modx=wt,mod2=am)
+```
+
+You can make 3d plot of this model.
+
+```{r}
+predict3d(fit) 
+rglwidget(elementId ="1st")
+```
+
+
+As shown in the above figures, when the number of predictive variables is greater than the specified number, these variables are replaced with **typical** values when calculating the slope and intercept of the regression equation, and are displayed at the lower right of the plot. Typical values are the median for numeric, integer, and ordered factor vectors and the most frequent value for factors, characters, and logical vectors. In this regression model, gear is replaced by 4, carb by 2 and am by 0.
+
+You can draw plot with one predictor or two predictors.
+
+```{r,out.width="49%",fig.show='hold',fig.align='default'}
+ggPredict(fit,pred=hp)  
+ggPredict(fit,pred=hp,modx=wt)
+```
+
+Predictive variables can be specified regardless of the order of the regression equation.
+
+```{r,out.width="49%",fig.show='hold',fig.align='default'}
+ggPredict(fit, pred=wt)
+ggPredict(fit, pred=wt, modx=am)
+```
+
+## Polynomial Regression
+
+Polynomial regression is a form of regression analysis in which the relationship between the independent variable x and the dependent variable y is modelled as an *n*th degree polynomial in x.
+
+$y=a+bx+cx^2+dx^3...$ 
+
+The `radial` data in package `moonBook` is a demographic data of 115 patients performing IVUS(intravascular ultrasound) examination of a radial artery. The body weight can fit higher powers of height. The ggPredict() function can draw the polynomial regression model. 
+
+```{r}
+require(moonBook)
+
+fit1=lm(weight~I(height^2)+height+sex,data=radial)
+summary(fit1)
+
+ggPredict(fit1,xpos=c(0.4,0.6))
+```
+
+You can draw 3d plot of this model.
+
+```{r}
+predict3d(fit1,radius=1)
+rglwidget(elementId ="2nd")
+```
+

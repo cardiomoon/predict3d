@@ -3,6 +3,10 @@ title: "Drawing the Multiple Regression Models"
 subtitle: "Part I. From Simple to Multiple Regression"
 author: "Keon-Woong Moon"
 date: "`r Sys.Date()`"
+vignette: >
+  %\VignetteIndexEntry{predict3d}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 
@@ -81,6 +85,7 @@ You can draw this model with ggPredict() function. You can draw separate figure 
 ggPredict(fit1,digits=1)
 ggPredict(fit1,digits=1,show.error = TRUE,facet.modx = TRUE,show.text=FALSE)
 ```
+
 You can draw 3d plot of this model with predict3d() function.
 
 ```{r,fig.align='center'}

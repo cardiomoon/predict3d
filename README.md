@@ -1,6 +1,8 @@
 R package predict3d <img src="inst/figures/imgfile.png" align="right" height="120" width="103.6"/>
 =======================================================================================
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/predict3d)](https://cran.r-project.org/package=predict3d)
+[![Total
+Downloads](https://cranlogs.r-pkg.org/badges/grand-total/predict3d)](https://cran.r-project.org/package=predict3d)
 
 
 R package `predict3d` aims to draw predicts plot for various regression models. The main two functions are ggPredict() for 2-dimensional plot and predict3d() for 3-dimensional plot.

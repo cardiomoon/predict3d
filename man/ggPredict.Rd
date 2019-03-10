@@ -102,5 +102,10 @@ fit2=glm(cens~pnodes*age*horTh,data=GBSG2,family=binomial)
 ggPredict(fit2,pred=pnodes,modx=age,mod2=horTh,mode=3,colorn=10,show.text=FALSE)
 fit=lm(mpg~log(hp)*wt,data=mtcars)
 ggPredict(fit,hp,wt)
+fit=lm(mpg~hp*wt+disp+gear+carb+am,data=mtcars)
+ggPredict(fit,disp,gear,am)
+fit=lm(weight~I(height^3)+I(height^2)+height+sex,data=radial)
+ggPredict(fit)
+predict3d(fit)
 }
 }
