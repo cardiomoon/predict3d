@@ -83,11 +83,13 @@ restoreData=function(data){
 #'@export
 #'@examples
 #'restoreNames(c("factor(cyl)","am"))
-#'restoreNames(c("I(age^2)","am"))
+#'restoreNames(c("I(age^2)","am","100/mpg","cyl^1/2","mpg2","sex + 0.5"))
 restoreNames=function(x){
-     temp=str_replace(x,".*\\(","")
-     temp=str_replace(temp,"\\)","")
+     temp=str_replace_all(x,".*\\(|\\)","")
+     temp=str_replace_all(temp," ","")
      temp=str_replace(temp,"(\\^|\\*)([:digit:]|\\.|\\/).*","")
+     temp=str_replace(temp,"[:digit:].*(/|\\*|\\+|-|\\^)","")
+     temp=str_replace(temp,"(/|\\*|\\+|-|\\^)[:digit:].*","")
      temp
 }
 
@@ -175,9 +177,9 @@ seekNamesDf=function(vars,df){
 #'}
 fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod2.values=NULL,colorn=3,maxylev=6){
 
-     #  fit=lm(mpg~wt*hp*factor(vs),data=mtcars)
-     # predictors=c("wt")
-     # mode=1;pred.values=NULL;modx.values=NULL;mod2.values=NULL;colorn=3;maxylev=6
+       #  fit=lm(100/mpg~wt*hp,data=mtcars)
+       # predictors=c("wt","hp")
+       # mode=1;pred.values=NULL;modx.values=NULL;mod2.values=NULL;colorn=3;maxylev=6
 
      predictors=restoreNames(predictors)
      predictors
@@ -299,6 +301,7 @@ fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod
     newdf$ymax<-newdf[[yvar]]+result$se.fit
     newdf$ymin<-newdf[[yvar]]-result$se.fit
     newdf=restoreData2(newdf)
+    newdf=restoreData3(newdf)
     if(!is.null(caption)) attr(newdf,"caption")=caption
     newdf
 
@@ -397,7 +400,8 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     #  fit=lm(mpg~hp*wt*vs,data=mtcars)
     # fit=lm(NTAV~I(age^2)+sex-1,data=radial)
     # fit=lm(mpg~hp*wt+disp+gear+carb+am,data=mtcars)
-    # predc="height";modxc="sex";mod2c=NULL;jitter=NULL;show.error=FALSE
+    # fit=lm(100/mpg~hp*wt,data=mtcars)
+    # predc="hp";modxc="wt";mod2c=NULL;jitter=NULL;show.error=FALSE
     #  add.loess=FALSE;angle=NULL;facetbycol=TRUE;facet.modx=FALSE;colorn=3;mode=1
 
     method=class(fit)[1]
@@ -474,6 +478,7 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     # rawdata=data.frame(rawdata)
     rawdata=restoreData(rawdata)
     rawdata=restoreData2(rawdata)
+    rawdata=restoreData3(rawdata)
 
     rawdata$yhat=predict(fit,newdata=rawdata)
 
@@ -572,10 +577,12 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
 
     }
      # fitted=data.frame(fitted)
-          # print(newFormula)
+            # print(newFormula)
 
 
     fitted
+    temp=fitted %>% do(coef= lm(newFormula,data=.)$coef)
+    temp$coef
     ## polynomial
 
     polynames=names(fit$model)[which(str_detect(names(fit$model),paste0("I\\(",predc,"\\^")))]

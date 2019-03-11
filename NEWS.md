@@ -14,3 +14,12 @@ predict3d version 0.1.1
 # Bug-fixed
 
 # New function add_lines() added
+
+
+predict3d version 0.1.2
+=======================
+(2019-Mar-11)
+
+# Bug-fixed
+
+# New function restoreData2(), restoreData3()  added

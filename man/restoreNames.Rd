@@ -14,5 +14,5 @@ Restore factors in variable name as numeric
 }
 \examples{
 restoreNames(c("factor(cyl)","am"))
-restoreNames(c("I(age^2)","am"))
+restoreNames(c("I(age^2)","am","100/mpg","cyl^1/2","mpg2","sex + 0.5"))
 }
