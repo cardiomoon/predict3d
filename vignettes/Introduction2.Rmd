@@ -30,7 +30,7 @@ R package **predict3d** aims to draw predicts plot for various regression models
 
 You can make multiple regression model with more than three explanatory variables.
 
-```{r pressure, echo=FALSE}
+```{r, echo=FALSE}
 library(predict3d)
 library(rgl)
 
@@ -94,3 +94,55 @@ predict3d(fit1,radius=1)
 rglwidget(elementId ="2nd")
 ```
 
+## Transforming of variables
+
+When models don’t meet the normality, linearity, or homoscedasticity assumptions, transforming one or more variables can often improve or correct the situation. You can make model with power transformation like this. The variable NTAV(normalized total atheroma volume measured by IVUS in cubic mm) in the data `radial` is a surrogate marker of atherosclerosis.
+
+```{r}
+fit2=lm(log(NTAV)~log(hsCRP)*age,data=radial)
+summary(fit2)
+```
+
+In this situation, you can draw this model with normal x-axis scale, log x-axis scale, normal y-axis scale and log y axis scale.
+
+```{r,out.width="49%",fig.show='hold',fig.align='default'}
+require(ggplot2)
+options(ggPredict.show.point=FALSE)
+ggPredict(fit2,plot=FALSE)$p+labs(title="A. Log y-axis scale")
+ggPredict(fit2,pred=log(hsCRP),modx=age,plot=FALSE)$p+labs(title="B. Log x-axis and log y-axis scale")
+ggPredict(fit2,dep=NTAV,plot=FALSE)$p+labs(title="C. Normal x-axis and normal y-axis scale")
+ggPredict(fit2,pred=log(hsCRP),modx=age,dep=NTAV,plot=FALSE)$p+labs(title="D. Log x-axis scale")
+```
+
+ggPredict() function can handle sqrt(), log(), exp(), I(x^2) and factor().
+
+```{r,out.width="49%",fig.show='hold',fig.align='default'}
+fit3=lm(mpg ~ sqrt(wt)*factor(vs),data=mtcars)
+ggPredict(fit3)
+ggPredict(fit3,pred=sqrt(wt),modx=factor(vs))
+```
+
+ggPredict() function can handle strings and factor.
+
+```{r,out.width="49%",fig.show='hold',fig.align='default'}
+fit4=lm(log(NTAV)~age*sex,data=radial)
+ggPredict(fit4,xpos=0.5)
+fit5=lm(Sepal.Length~Sepal.Width*Species,data=iris)
+ggPredict(fit5,xpos=0.5)
+```
+
+## Complex Regression Formula
+
+When the left hand side of the formula is not a simple name, ggPredict() function can make plot of the model.
+
+```{r,out.width="49%",fig.show='hold',fig.align='default'}
+fit6 = lm(100/mpg ~ hp*wt,data=mtcars)
+ggPredict(fit6, xpos=0.5)
+ggPredict(fit6, dep=mpg,xpos=0.5)
+```
+
+```{r,out.width="49%",fig.show='hold',fig.align='default'}
+fit7 = lm( 2^cyl ~ sqrt(hp)*wt,data=mtcars)
+ggPredict(fit7, xpos=0.5)
+ggPredict(fit7, dep=cyl, modx=wt,xpos=0.5)
+```

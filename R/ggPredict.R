@@ -174,6 +174,8 @@ seekNamesDf=function(vars,df){
 #'fit2newdata(fit,predictors=c("hp","log(wt)"))
 #'fit=lm(mpg~hp*wt*factor(vs),data=mtcars)
 #'fit2newdata(fit,predictors=c("hp"))
+#'fit=lm(log(NTAV)~I(age^2)*sex,data=radial)
+#'fit2newdata(fit,predictors=c("I(age^2)","sex"))
 #'}
 fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod2.values=NULL,colorn=3,maxylev=6){
 
@@ -381,7 +383,8 @@ fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod
 #'predict3d(fit)
 #'}
 ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.values=NULL,
-                   dep=NULL,mode=1,colorn=3,maxylev=6,show.point=TRUE,show.error=FALSE,
+                   dep=NULL,mode=1,colorn=3,maxylev=6,show.point=getOption("ggPredict.show.point",TRUE),
+                   show.error=FALSE,
                    jitter=NULL,se=FALSE,alpha=0.1,
                     show.text=TRUE, add.modx.values=TRUE,add.loess=FALSE,
                     labels=NULL,angle=NULL,xpos=NULL,vjust=NULL,digits=2,
@@ -393,11 +396,15 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     # mode=1;colorn=3;maxylev=6;show.point=TRUE;se=FALSE;alpha=0.1
     # show.text=TRUE; add.modx.values=TRUE
     # labels=NULL;xpos=0.7;vjust=-0.5;digits=3
-    # predictors=c("hp","engine")
-    # fit=lm(mpg~log(hp)*wt*vs,data=mtcars)
-    # fit=lm(weight~I(height^3)+I(height^2)+height+sex,data=radial)
+    #
+    #  fit=lm(log(NTAV)~I(age^2)*sex,data=radial)
+    #  predc="I(age^2)";modxc="sex";mod2c=NULL;jitter=NULL;show.error=FALSE
+    #  add.loess=FALSE;angle=NULL;facetbycol=TRUE;facet.modx=FALSE;colorn=3;mode=1
     #
     #  fit=lm(mpg~hp*wt*vs,data=mtcars)
+     # predictors=c("hp","engine")
+     # fit=lm(mpg~log(hp)*wt*vs,data=mtcars)
+     # fit=lm(weight~I(height^3)+I(height^2)+height+sex,data=radial)
     # fit=lm(NTAV~I(age^2)+sex-1,data=radial)
     # fit=lm(mpg~hp*wt+disp+gear+carb+am,data=mtcars)
     # fit=lm(100/mpg~hp*wt,data=mtcars)
@@ -529,7 +536,9 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     # temp1=setdiff(predictors,predc)
     # temp1=restoreNames(temp1)
     # predc
-    exclude=c(predc,yvar,yvarOrig,restoreNames(yvar),"modxgroup","mod2group","se.fit","ymax","ymin")
+
+    exclude=c(predc,restoreNames(predc),yvar,yvarOrig,restoreNames(yvar),
+              "modxgroup","mod2group","se.fit","ymax","ymin")
     temp1=setdiff(names(fitted),exclude)
     # exclude1=which(str_detect(temp1,"factor\\("))
     # if(length(exclude1)>0) temp1=temp1[-exclude1]
@@ -590,8 +599,14 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     if(length(polynames)>0){
          temppredc=sort(polynames,decreasing=TRUE)[1]
     } else{
-         temppredc=predc
+         if(predc %in% names(fit$model)) {
+           temppredc=predc
+         } else{
+           temppredc=names(fit$model)[which(str_detect(names(fit$model),predc))][1]
+         }
     }
+
+
     if(method=="lm") {
         fitted<-fitted %>% do(coef= lm(newFormula,data=.)$coef[c("(Intercept)",temppredc)])
     } else if(method=="glm") {
@@ -703,7 +718,7 @@ fitted
          ytransform=0.5
     }
     fitted
-    fitted<-slope2angle(fitted,fit,ytransform=ytransform,predc,modxc,p,method=method,xpos=xpos,vjust=vjust,digits=digits,
+    fitted<-slope2angle(fitted,fit,ytransform=ytransform,predc,temppredc,modxc,yvar,p,method=method,xpos=xpos,vjust=vjust,digits=digits,
                         facetno=facetno,add.modx.values=add.modx.values)
     fitted
     if(!is.null(angle)) fitted$angle=angle
@@ -753,7 +768,9 @@ fitted
 #'@param fit An object of class "lm" or "glm"
 #'@param ytransform Numeric. If 1, log transformation of dependent variable, If -1, exponential transformation
 #'@param predc Name of predictor variable
+#'@param temppredc Name of predictor variable in regression equation
 #'@param modxc Name of moderator variable
+#'@param yvar Name of dependent variable
 #'@param p An object of class ggplot
 #'@param method String. Choices are one of "lm" and "glm".
 #'@param xpos The relative x-axis position of labels. Should be within 0 to 1
@@ -761,7 +778,7 @@ fitted
 #'@param digits integer indicating the number of decimal places
 #'@param facetno The number of facets
 #'@param add.modx.values Whether add name of moderator variable
-slope2angle=function(df,fit,ytransform=0,predc,modxc,p,method="lm",xpos=NULL,vjust=NULL,digits=3,facetno=NULL,add.modx.values=TRUE){
+slope2angle=function(df,fit,ytransform=0,predc,temppredc,modxc,yvar,p,method="lm",xpos=NULL,vjust=NULL,digits=3,facetno=NULL,add.modx.values=TRUE){
      # digits=3;xpos=0.7
     # method="lm";xpos=NULL;vjust=NULL;digits=3;facetno=NULL;add.modx.values=TRUE
 
@@ -775,7 +792,8 @@ slope2angle=function(df,fit,ytransform=0,predc,modxc,p,method="lm",xpos=NULL,vju
     df$angle=df$radian*180/pi
 
     if(method=="lm"){
-        df$label=paste0(round(df$slope,digits),predc)
+        df$label=paste0(round(df$slope,digits),temppredc)
+        if(str_detect(temppredc,"I\\(")) df$label=paste0(round(df$slope,digits),str_replace(temppredc,"I\\(","\\("))
         polynames=names(fit$model)[which(str_detect(names(fit$model),paste0("I\\(",predc,"\\^")))]
         if(length(polynames)>0){
              polynames=sort(polynames,decreasing=TRUE)
@@ -943,7 +961,21 @@ slope2angle=function(df,fit,ytransform=0,predc,modxc,p,method="lm",xpos=NULL,vju
 
 
     attr(df,"ratio")=ratio
-    # print(df)
+    if(method!="loess"){
+    ## y including arithmetic operator
+    depc1=names(fit$model)[1]
+    if(yvar!=depc1){
+
+    depc2=restoreNames(depc1)
+    keep=str_detect(depc1,"log|sqrt|exp")
+    keep=keep | (depc1==depc2)
+    if(!keep) {
+      names(df)[names(df)=="y"]=str_replace(depc1,depc2,"y")
+      df=restoreData3(df,changeLabel=TRUE)
+    }
+    df$angle=0
+    }
+    }
     df
 }
 

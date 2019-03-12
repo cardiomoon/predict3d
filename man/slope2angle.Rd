@@ -4,9 +4,9 @@
 \alias{slope2angle}
 \title{Make angle data with slope data}
 \usage{
-slope2angle(df, fit, ytransform = 0, predc, modxc, p, method = "lm",
-  xpos = NULL, vjust = NULL, digits = 3, facetno = NULL,
-  add.modx.values = TRUE)
+slope2angle(df, fit, ytransform = 0, predc, temppredc, modxc, yvar, p,
+  method = "lm", xpos = NULL, vjust = NULL, digits = 3,
+  facetno = NULL, add.modx.values = TRUE)
 }
 \arguments{
 \item{df}{A data.frame}
@@ -17,7 +17,11 @@ slope2angle(df, fit, ytransform = 0, predc, modxc, p, method = "lm",
 
 \item{predc}{Name of predictor variable}
 
+\item{temppredc}{Name of predictor variable in regression equation}
+
 \item{modxc}{Name of moderator variable}
+
+\item{yvar}{Name of dependent variable}
 
 \item{p}{An object of class ggplot}
 

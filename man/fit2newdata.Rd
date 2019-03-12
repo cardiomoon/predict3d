@@ -45,5 +45,7 @@ fit=lm(mpg~hp*log(wt),data=mtcars)
 fit2newdata(fit,predictors=c("hp","log(wt)"))
 fit=lm(mpg~hp*wt*factor(vs),data=mtcars)
 fit2newdata(fit,predictors=c("hp"))
+fit=lm(log(NTAV)~I(age^2)*sex,data=radial)
+fit2newdata(fit,predictors=c("I(age^2)","sex"))
 }
 }

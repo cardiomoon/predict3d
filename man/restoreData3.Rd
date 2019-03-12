@@ -4,10 +4,12 @@
 \alias{restoreData3}
 \title{Restore data from arithmetic operator}
 \usage{
-restoreData3(df)
+restoreData3(df, changeLabel = FALSE)
 }
 \arguments{
 \item{df}{A data.frame}
+
+\item{changeLabel}{logical}
 }
 \description{
 Restore data from arithmetic operator
