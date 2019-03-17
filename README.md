@@ -147,3 +147,5 @@ For more information about package `rgl`, please read the package vignette at: h
 You can see the following vignettes published on rpubs.com
 
 [Drawing the multiple regression models(Part I)](http://rpubs.com/cardiomoon/474707)
+
+[Part II. Transforming variables](http://rpubs.com/cardiomoon/475466)
