@@ -8,11 +8,11 @@ ggPredict(fit, pred = NULL, modx = NULL, mod2 = NULL,
   modx.values = NULL, mod2.values = NULL, dep = NULL, mode = 1,
   colorn = 3, maxylev = 6,
   show.point = getOption("ggPredict.show.point", TRUE),
-  show.error = FALSE, jitter = NULL, se = FALSE, alpha = 0.1,
-  show.text = TRUE, add.modx.values = TRUE, add.loess = FALSE,
-  labels = NULL, angle = NULL, xpos = NULL, vjust = NULL,
-  digits = 2, facet.modx = FALSE, facetbycol = TRUE, plot = TRUE,
-  ...)
+  show.error = FALSE, error.color = "red", jitter = NULL,
+  se = FALSE, alpha = 0.1, show.text = TRUE,
+  add.modx.values = TRUE, add.loess = FALSE, labels = NULL,
+  angle = NULL, xpos = NULL, vjust = NULL, digits = 2,
+  facet.modx = FALSE, facetbycol = TRUE, plot = TRUE, ...)
 }
 \arguments{
 \item{fit}{An object of class "lm" or "glm"}
@@ -38,6 +38,8 @@ ggPredict(fit, pred = NULL, modx = NULL, mod2 = NULL,
 \item{show.point}{Logical. Whether or not add points}
 
 \item{show.error}{Logical. Whether or not show error}
+
+\item{error.color}{color of error. dafault value is "red"}
 
 \item{jitter}{logical Whether or not use geom_jitter}
 

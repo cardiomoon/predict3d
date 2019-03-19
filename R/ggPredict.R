@@ -323,6 +323,7 @@ fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod
 #'@param maxylev An integer indicating the maximum number of levels of numeric variable be treated as a categorical variable
 #'@param show.point Logical. Whether or not add points
 #'@param show.error Logical. Whether or not show error
+#'@param error.color color of error. dafault value is "red"
 #'@param jitter logical Whether or not use geom_jitter
 #'@param se Logical. Whether or not add confidence interval
 #'@param alpha A numeric. Transparency
@@ -384,7 +385,7 @@ fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod
 #'}
 ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.values=NULL,
                    dep=NULL,mode=1,colorn=3,maxylev=6,show.point=getOption("ggPredict.show.point",TRUE),
-                   show.error=FALSE,
+                   show.error=FALSE,error.color="red",
                    jitter=NULL,se=FALSE,alpha=0.1,
                     show.text=TRUE, add.modx.values=TRUE,add.loess=FALSE,
                     labels=NULL,angle=NULL,xpos=NULL,vjust=NULL,digits=2,
@@ -662,7 +663,7 @@ fitted
         if(jitter) p<-p+geom_jitter(data=rawdata,width=0,height=0.05)
         else p<-p+geom_point(data=rawdata)
     }
-    if(show.error) p<-p+geom_segment(data=rawdata,aes_string(xend=predc,yend="yhat"))
+    if(show.error) p<-p+geom_segment(data=rawdata,aes_string(xend=predc,yend="yhat"),color=error.color)
     if(add.loess) p<-p+stat_smooth(data=rawdata,se=FALSE,color="red",fullrange = TRUE)
 
     if(se==TRUE) p<-p+ geom_ribbon(aes_string(ymax="ymax",ymin="ymin",color=NULL),alpha=alpha)
