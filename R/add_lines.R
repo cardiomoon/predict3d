@@ -50,7 +50,7 @@ calEquation=function(fit,mode=1,pred=NULL,modx=NULL,modx.values=NULL,label=NULL,
 #'require(ggplot2)
 #'fit=lm(mpg~wt*hp,data=mtcars)
 #'df=calEquation(fit)
-#'p=ggplot(data=mtcars)+geom_point(aes(x=wt,y=mpg))
+#'p=ggplot(data=mtcars,aes(x=wt,y=mpg))
 #'add_lines(p,df)
 #'add_lines(p,df,lty=1:3,color=1:3,size=1)+theme_bw()
 #'fit=lm(mpg~wt*vs,data=mtcars)
