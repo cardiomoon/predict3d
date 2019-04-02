@@ -31,7 +31,12 @@ Add lines with labels to pre-existing ggplot
 require(ggplot2)
 fit=lm(mpg~wt*hp,data=mtcars)
 df=calEquation(fit)
-p=ggplot(data=mtcars)+geom_point(aes(x=hp,y=mpg))
+p=ggplot(data=mtcars)+geom_point(aes(x=wt,y=mpg))
 add_lines(p,df)
 add_lines(p,df,lty=1:3,color=1:3,size=1)+theme_bw()
+fit=lm(mpg~wt*vs,data=mtcars)
+df=calEquation(fit)
+p=ggplot(data=mtcars)+geom_point(aes(x=wt,y=mpg))
+add_lines(p,df)
+add_lines(p,df,lty=1:2,color=1:2,size=1)+theme_bw()
 }

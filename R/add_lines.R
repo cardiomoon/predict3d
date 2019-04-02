@@ -1,50 +1,65 @@
 #'calculated slope and intercept from object of class lm
 #'@param fit An object of class lm
 #'@param mode A numeric
-#'@param pred.values Numeric. Values of predictor variable
+#'@param pred name of predictor variable
+#'@param modx name of modifier variable
+#'@param modx.values Numeric. Values of modifier variable
 #'@param label A character string
-#'@param digits Integer indicating the number of decimal places 
+#'@param maxylev maximum length of unique value of variable to be treated as a categorial variable
+#'@param digits Integer indicating the number of decimal places
 #'@export
 #'@examples
 #'fit=lm(mpg~wt*hp,data=mtcars)
 #'df=calEquation(fit)
-calEquation=function(fit,mode=1,pred.values=NULL,label=NULL,digits=2){
-        if(is.null(pred.values)) {
-             if(mode==1) {
-                  pred.values=mean(fit$model[[2]],na.rm=TRUE)+c(-1,0,1)*sd(fit$model[[2]],na.rm=TRUE)   
+calEquation=function(fit,mode=1,pred=NULL,modx=NULL,modx.values=NULL,label=NULL,maxylev=6,digits=2){
+         # pred=NULL;modx=NULL;modx.values=NULL;maxylev=6;label=NULL;digits=2;mode=1
+        data=fit$model
+        if(is.null(modx)) modx=names(data)[3]
+        if(is.null(pred)) pred=names(data)[2]
+        if(is.null(modx.values)) {
+             if(length(unique(data[[modx]]))<maxylev){
+                 modx.values=sort(unique(data[[modx]]))
+             } else if(mode==1) {
+                  modx.values=mean(data[[modx]],na.rm=TRUE)+c(-1,0,1)*sd(data[[modx]],na.rm=TRUE)
              } else if(mode==2){
-                  pred.values=quantile(fit$model[[2]],probs=c(0.14,0.5,0.86),type=6)
+                  modx.values=quantile(data[[modx]],probs=c(0.14,0.5,0.86),type=6)
              }
         }
-        if(is.null(label)) label=names(fit$model)[2]
-        intercept=pred.values*fit$coef[2]+fit$coef[1]
-        slope=pred.values*fit$coef[4]+fit$coef[3]
-        labels=paste0(label,"=",round(pred.values,digits))
+        modx
+        if(is.null(label)) label=modx
+        intercept=modx.values*fit$coef[modx]+fit$coef[1]
+        slope=modx.values*fit$coef[4]+fit$coef[pred]
+        labels=paste0(label,"=",round(modx.values,digits))
         df=data.frame(intercept,slope,label=labels)
         df
 }
 
 
 #'Add lines with labels to pre-existing ggplot
-#'@param p An object of class ggplot 
+#'@param p An object of class ggplot
 #'@param df A data.frame. Required columns are slope, intercept and label
 #'@param xpos A numeric. Relative horizontal position
 #'@param add.coord.fixed Logical. Whether or not add coord_fixed() function
-#'@param lty line type 
+#'@param lty line type
 #'@param color line color
 #'@param size line size
 #'@param ... Further arguments to be passed to geom_text
 #'@importFrom ggplot2 ggplot stat_function
-#'@export 
+#'@export
 #'@examples
 #'require(ggplot2)
 #'fit=lm(mpg~wt*hp,data=mtcars)
 #'df=calEquation(fit)
-#'p=ggplot(data=mtcars)+geom_point(aes(x=hp,y=mpg))
+#'p=ggplot(data=mtcars)+geom_point(aes(x=wt,y=mpg))
 #'add_lines(p,df)
 #'add_lines(p,df,lty=1:3,color=1:3,size=1)+theme_bw()
+#'fit=lm(mpg~wt*vs,data=mtcars)
+#'df=calEquation(fit)
+#'p=ggplot(data=mtcars)+geom_point(aes(x=wt,y=mpg))
+#'add_lines(p,df)
+#'add_lines(p,df,lty=1:2,color=1:2,size=1)+theme_bw()
 add_lines=function(p,df,xpos=0.3,add.coord.fixed=TRUE,lty=1,color="black",size=0.5,...){
-    
+
      count=nrow(df)
      info=getAspectRatio(p)
      ratio=info$ratio

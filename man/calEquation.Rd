@@ -4,17 +4,23 @@
 \alias{calEquation}
 \title{calculated slope and intercept from object of class lm}
 \usage{
-calEquation(fit, mode = 1, pred.values = NULL, label = NULL,
-  digits = 2)
+calEquation(fit, mode = 1, pred = NULL, modx = NULL,
+  modx.values = NULL, label = NULL, maxylev = 6, digits = 2)
 }
 \arguments{
 \item{fit}{An object of class lm}
 
 \item{mode}{A numeric}
 
-\item{pred.values}{Numeric. Values of predictor variable}
+\item{pred}{name of predictor variable}
+
+\item{modx}{name of modifier variable}
+
+\item{modx.values}{Numeric. Values of modifier variable}
 
 \item{label}{A character string}
+
+\item{maxylev}{maximum length of unique value of variable to be treated as a categorial variable}
 
 \item{digits}{Integer indicating the number of decimal places}
 }
