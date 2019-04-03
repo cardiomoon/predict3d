@@ -4,8 +4,8 @@
 \alias{add_lines}
 \title{Add lines with labels to pre-existing ggplot}
 \usage{
-add_lines(p, df, xpos = 0.3, add.coord.fixed = TRUE, lty = 1,
-  color = "black", size = 0.5, ...)
+add_lines(p, df, xpos = 0.3, add.coord.fixed = TRUE, lty = NULL,
+  color = NULL, size = 0.5, add_theme_bw2 = TRUE, ...)
 }
 \arguments{
 \item{p}{An object of class ggplot}
@@ -22,6 +22,8 @@ add_lines(p, df, xpos = 0.3, add.coord.fixed = TRUE, lty = 1,
 
 \item{size}{line size}
 
+\item{add_theme_bw2}{logical Whether or not add theme_bw2()}
+
 \item{...}{Further arguments to be passed to geom_text}
 }
 \description{
@@ -31,9 +33,9 @@ Add lines with labels to pre-existing ggplot
 require(ggplot2)
 fit=lm(mpg~wt*hp,data=mtcars)
 df=calEquation(fit)
-p=ggplot(data=mtcars)+geom_point(aes(x=wt,y=mpg))
+p=ggplot(data=mtcars,aes(x=wt,y=mpg))
 add_lines(p,df)
-add_lines(p,df,lty=1:3,color=1:3,size=1)+theme_bw()
+add_lines(p,df,lty=1:3,color=1:3,size=1)
 fit=lm(mpg~wt*vs,data=mtcars)
 df=calEquation(fit)
 p=ggplot(data=mtcars)+geom_point(aes(x=wt,y=mpg))
