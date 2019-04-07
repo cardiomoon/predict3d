@@ -29,5 +29,6 @@ calculated slope and intercept from object of class lm
 }
 \examples{
 fit=lm(mpg~wt*hp,data=mtcars)
-df=calEquation(fit)
+calEquation(fit)
+calEquation(fit,pred="hp")
 }

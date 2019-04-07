@@ -10,13 +10,15 @@
 #'@export
 #'@examples
 #'fit=lm(mpg~wt*hp,data=mtcars)
-#'df=calEquation(fit)
+#'calEquation(fit)
+#'calEquation(fit,pred="hp")
 calEquation=function(fit,mode=1,pred=NULL,modx=NULL,modx.values=NULL,label=NULL,maxylev=6,digits=2){
          # pred=NULL;modx=NULL;modx.values=NULL;maxylev=6;label=NULL;digits=2;mode=1
         data=fit$model
-        if(is.null(modx)) modx=names(data)[3]
+
         if(is.null(pred)) pred=names(data)[2]
-        if(is.null(modx.values)) {
+        if(is.null(modx)) modx=setdiff(names(data)[2:3],pred)
+       if(is.null(modx.values)) {
              if(length(unique(data[[modx]]))<maxylev){
                  modx.values=sort(unique(data[[modx]]))
              } else if(mode==1) {
@@ -28,7 +30,8 @@ calEquation=function(fit,mode=1,pred=NULL,modx=NULL,modx.values=NULL,label=NULL,
         modx
         if(is.null(label)) label=modx
         intercept=modx.values*fit$coef[modx]+fit$coef[1]
-        slope=modx.values*fit$coef[paste0(pred,":",modx)]+fit$coef[pred]
+        select=which(stringr::str_detect(names(fit$coef),":"))[1]
+        slope=modx.values*fit$coef[select]+fit$coef[pred]
         labels=paste0(label,"=",round(modx.values,digits))
         df=data.frame(intercept,slope,label=labels)
         df
