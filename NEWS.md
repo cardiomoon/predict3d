@@ -1,3 +1,9 @@
+predict3 version 0.1.3.1
+=======================
+(2019-Apr-11)
+
+# New arguments xlab, ylab and zlab added to predict3d()
+
 predict3 version 0.1.3
 =======================
 (2019-Apr-3)
