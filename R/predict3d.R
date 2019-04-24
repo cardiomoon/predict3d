@@ -83,6 +83,7 @@ rank2colors=function(x,palette="Blues",reverse=TRUE,color="red"){
 #' @param show.plane Logical. If true, show regression plane
 #' @param plane.color Name of color of regression plane
 #' @param plane.alpha Transparency scale of regression plane
+#' @param summarymode  An integer indicating method of extracting typical value of variables. If 1, typical() is used.If 2, mean() is used.
 #' @param ... additional parameters which will be passed to plot3d
 #'
 #' @importFrom rgl open3d next3d surface3d plot3d lines3d mfrow3d bg3d legend3d rglwidget axis3d par3d rgl.bg segments3d rgl.bringtotop rgl.clear
@@ -116,7 +117,7 @@ predict3d=function (fit, pred=NULL,modx=NULL,mod2=NULL,dep=NULL,
           show.summary = FALSE, overlay=NULL,show.error=FALSE,
           show.legend=FALSE,bg=NULL,type="s",radius=2,palette=NULL,palette.reverse=TRUE,
           color="red",show.subtitle=TRUE,
-          show.plane=TRUE,plane.color="steelblue",plane.alpha=0.5,...)
+          show.plane=TRUE,plane.color="steelblue",plane.alpha=0.5,summarymode=1,...)
 {
 
    # tm=ifelse(mtcars$am==0,"automatic","manual")
@@ -240,7 +241,7 @@ predict3d=function (fit, pred=NULL,modx=NULL,mod2=NULL,dep=NULL,
    }
 
 
-   newdata2=fit2newdata(fit,predictors,mode=3,colorn=colorn,maxylev=maxylev)
+   newdata2=fit2newdata(fit,predictors,mode=3,colorn=colorn,maxylev=maxylev,summarymode=summarymode)
   newdata2
    colorcount = length(unique(newdata2[[colorname]]))
    facetcount = ifelse(is.null(facetname),0,length(unique(newdata2[[facetname]])))

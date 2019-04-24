@@ -29,7 +29,7 @@ getMeans=function(x){
 number2group=function(x,mode=1,values=NULL,silent=FALSE,label="label",digits=2,colorn=3){
      if(is.null(values)){
      if(mode==1) values=mean(x,na.rm=TRUE)+c(-1,0,1)*sd(x,na.rm=TRUE)
-     else if(mode==2)  values=quantile(x,probs=c(0.14,0.5,0.86),type=6)
+     else if(mode==2)  values=quantile(x,probs=c(0.16,0.5,0.84),type=6)
      else values=seq_range(x,colorn)
      }
      if(!silent) cat("breaks=",values,"\n")
@@ -141,12 +141,13 @@ seekNamesDf=function(vars,df){
 #' Make a new data set for prediction
 #'@param fit An object of class "lm", "glm" or "loess"
 #'@param predictors Names of predictor variables in string
-#'@param mode A numeric. Useful when the variables are numeric. If 1, c(-1,0,1)*sd + mean is used. If 2, the 14th, 50th, 86th percentile values used. If 3 sequence over a the range of a vector used
+#'@param mode A numeric. Useful when the variables are numeric. If 1, c(-1,0,1)*sd + mean is used. If 2, the 16th, 50th, 84th percentile values used. If 3 sequence over a the range of a vector used
 #'@param pred.values For which values of the predictors should be used? Default is NULL. If NULL, 20 seq_range is used.
 #'@param modx.values For which values of the moderator should lines be plotted? Default is NULL. If NULL, then the customary +/- 1 standard deviation from the mean as well as the mean itself are used for continuous moderators. If the moderator is a factor variable and modx.values is NULL, each level of the factor is included.
 #'@param mod2.values For which values of the second moderator should lines be plotted? Default is NULL. If NULL, then the customary +/- 1 standard deviation from the mean as well as the mean itself are used for continuous moderators. If the moderator is a factor variable and modx.values is NULL, each level of the factor is included.
 #'@param colorn The number of regression lines when the modifier variable(s) are numeric.
 #'@param maxylev An integer indicating the maximum number of levels of numeric variable be treated as a categorical variable
+#'@param summarymode An integer indicating method of extracting typical value of variables. If 1, typical() is used.If 2, mean() is used.
 #'@importFrom prediction seq_range
 #'@importFrom tidyr crossing
 #'@importFrom magrittr "%>%"
@@ -177,7 +178,7 @@ seekNamesDf=function(vars,df){
 #'fit=lm(log(NTAV)~I(age^2)*sex,data=radial)
 #'fit2newdata(fit,predictors=c("I(age^2)","sex"))
 #'}
-fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod2.values=NULL,colorn=3,maxylev=6){
+fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod2.values=NULL,colorn=3,maxylev=6,summarymode=1){
 
        #  fit=lm(100/mpg~wt*hp,data=mtcars)
        # predictors=c("wt","hp")
@@ -233,7 +234,7 @@ fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod
         newdf2<-lapply(df1[2:length(df1)],function(x) {
             if(is.mynumeric(x,maxylev=maxylev)) {
                 if(mode==1) mean(x,na.rm=TRUE)+c(-1,0,1)*sd(x,na.rm=TRUE)
-                else if(mode==2) quantile(x,probs=c(0.14,0.50,0.86),type=6)
+                else if(mode==2) quantile(x,probs=c(0.16,0.50,0.84),type=6)
                 else if(mode==3) seq_range(x,colorn)
             } else{
                 unique(x)
@@ -248,8 +249,11 @@ fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod
 
     caption<-NULL
     if(length(df2)>0){
-
-        newdf3<-lapply(df2,modelr::typical) %>% reduce(crossing)
+        if(summarymode==1){
+           newdf3<-lapply(df2,modelr::typical) %>% reduce(crossing)
+        } else{
+          newdf3<-lapply(df2,mean,na.rm=TRUE) %>% reduce(crossing)
+        }
         newdf3=data.frame(newdf3,stringsAsFactors = FALSE)
         if(nrow(newdf3)>1) newdf3<-newdf3[1,]
         colnames(newdf3)=names(df2)
@@ -338,6 +342,7 @@ fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod
 #'@param facet.modx Create separate panels for each level of the moderator? Default is FALSE
 #'@param facetbycol Logical.
 #'@param plot Logical. Should a plot of the results be printed? Default is TRUE.
+#'@param summarymode  An integer indicating method of extracting typical value of variables. If 1, typical() is used.If 2, mean() is used.
 #'@param ... additional arguments to be passed to geom_text
 #'@importFrom rlang enquo "!!" quo_name enexpr
 #'@importFrom dplyr group_by do
@@ -389,7 +394,7 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
                    jitter=NULL,se=FALSE,alpha=0.1,
                     show.text=TRUE, add.modx.values=TRUE,add.loess=FALSE,
                     labels=NULL,angle=NULL,xpos=NULL,vjust=NULL,digits=2,
-                    facet.modx=FALSE,facetbycol=TRUE,plot=TRUE,...) {
+                    facet.modx=FALSE,facetbycol=TRUE,plot=TRUE,summarymode=1,...) {
 
 
 
@@ -491,7 +496,7 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     rawdata$yhat=predict(fit,newdata=rawdata)
 
     newdata=fit2newdata(fit,predictors,mode=mode,modx.values=modx.values,
-                        mod2.values=mod2.values,colorn=colorn,maxylev=maxylev)
+                        mod2.values=mod2.values,colorn=colorn,maxylev=maxylev,summarymode=summarymode)
     # print(newdata)
     if(!is.null(mod2c)){
          if(is.mynumeric(rawdata[[mod2c]],maxylev=maxylev)) {

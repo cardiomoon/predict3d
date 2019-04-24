@@ -11,7 +11,7 @@ predict3d(fit, pred = NULL, modx = NULL, mod2 = NULL, dep = NULL,
   bg = NULL, type = "s", radius = 2, palette = NULL,
   palette.reverse = TRUE, color = "red", show.subtitle = TRUE,
   show.plane = TRUE, plane.color = "steelblue", plane.alpha = 0.5,
-  ...)
+  summarymode = 1, ...)
 }
 \arguments{
 \item{fit}{A model object for which prediction is desired.}
@@ -65,6 +65,8 @@ predict3d(fit, pred = NULL, modx = NULL, mod2 = NULL, dep = NULL,
 \item{plane.color}{Name of color of regression plane}
 
 \item{plane.alpha}{Transparency scale of regression plane}
+
+\item{summarymode}{An integer indicating method of extracting typical value of variables. If 1, typical() is used.If 2, mean() is used.}
 
 \item{...}{additional parameters which will be passed to plot3d}
 }

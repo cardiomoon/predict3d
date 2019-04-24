@@ -12,7 +12,8 @@ ggPredict(fit, pred = NULL, modx = NULL, mod2 = NULL,
   se = FALSE, alpha = 0.1, show.text = TRUE,
   add.modx.values = TRUE, add.loess = FALSE, labels = NULL,
   angle = NULL, xpos = NULL, vjust = NULL, digits = 2,
-  facet.modx = FALSE, facetbycol = TRUE, plot = TRUE, ...)
+  facet.modx = FALSE, facetbycol = TRUE, plot = TRUE,
+  summarymode = 1, ...)
 }
 \arguments{
 \item{fit}{An object of class "lm" or "glm"}
@@ -68,6 +69,8 @@ ggPredict(fit, pred = NULL, modx = NULL, mod2 = NULL,
 \item{facetbycol}{Logical.}
 
 \item{plot}{Logical. Should a plot of the results be printed? Default is TRUE.}
+
+\item{summarymode}{An integer indicating method of extracting typical value of variables. If 1, typical() is used.If 2, mean() is used.}
 
 \item{...}{additional arguments to be passed to geom_text}
 }
