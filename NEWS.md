@@ -1,3 +1,9 @@
+predict3 version 0.1.3.3
+========================
+(2019-Jun-7)
+
+# CalEquation function can calculate intercept in multiple regression model with interaction
+
 predict3 version 0.1.3.2
 =======================
 (2019-Apr-24)

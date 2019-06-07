@@ -28,7 +28,7 @@ calEquation(fit, mode = 1, pred = NULL, modx = NULL,
 calculated slope and intercept from object of class lm
 }
 \examples{
-fit=lm(mpg~wt*hp,data=mtcars)
+fit=lm(mpg~wt*hp+carb,data=mtcars)
 calEquation(fit)
 calEquation(fit,pred="hp")
 }

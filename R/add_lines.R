@@ -9,11 +9,11 @@
 #'@param digits Integer indicating the number of decimal places
 #'@export
 #'@examples
-#'fit=lm(mpg~wt*hp,data=mtcars)
+#'fit=lm(mpg~wt*hp+carb,data=mtcars)
 #'calEquation(fit)
 #'calEquation(fit,pred="hp")
 calEquation=function(fit,mode=1,pred=NULL,modx=NULL,modx.values=NULL,label=NULL,maxylev=6,digits=2){
-         # pred=NULL;modx=NULL;modx.values=NULL;maxylev=6;label=NULL;digits=2;mode=1
+          # pred=NULL;modx=NULL;modx.values=NULL;maxylev=6;label=NULL;digits=2;mode=2
         data=fit$model
 
         if(is.null(pred)) pred=names(data)[2]
@@ -30,6 +30,13 @@ calEquation=function(fit,mode=1,pred=NULL,modx=NULL,modx.values=NULL,label=NULL,
         modx
         if(is.null(label)) label=modx
         intercept=modx.values*fit$coef[modx]+fit$coef[1]
+        ncol(data)
+        names(data)
+        if(ncol(data)>3){
+            for(i in 4:ncol(data)){
+               intercept=intercept+fit$coef[names(data)[i]]*mean(data[[i]],na.rm=TRUE)
+            }
+        }
         select=which(stringr::str_detect(names(fit$coef),":"))[1]
         slope=modx.values*fit$coef[select]+fit$coef[pred]
         labels=paste0(label,"=",round(modx.values,digits))
