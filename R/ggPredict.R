@@ -149,7 +149,6 @@ seekNamesDf=function(vars,df){
 #'@param maxylev An integer indicating the maximum number of levels of numeric variable be treated as a categorical variable
 #'@param summarymode An integer indicating method of extracting typical value of variables. If 1, typical() is used.If 2, mean() is used.
 #'@importFrom prediction seq_range
-#'@importFrom tidyr crossing
 #'@importFrom magrittr "%>%"
 #'@importFrom purrr reduce
 #'@importFrom modelr typical
@@ -162,6 +161,7 @@ seekNamesDf=function(vars,df){
 #'fit2newdata(fit,predictors=c("hp","wt","am"))
 #'fit2newdata(fit,predictors=c("hp","wt","cyl"))
 #'fit2newdata(fit,predictors=c("hp"))
+#'fit2newdata(fit,predictors=c("hp","wt"))
 #'fit=loess(mpg~hp*wt*am,data=mtcars)
 #'fit2newdata(fit,predictors=c("hp"))
 #'\donttest{
@@ -175,6 +175,7 @@ seekNamesDf=function(vars,df){
 #'fit2newdata(fit,predictors=c("hp","log(wt)"))
 #'fit=lm(mpg~hp*wt*factor(vs),data=mtcars)
 #'fit2newdata(fit,predictors=c("hp"))
+#'require(moonBook)
 #'fit=lm(log(NTAV)~I(age^2)*sex,data=radial)
 #'fit2newdata(fit,predictors=c("I(age^2)","sex"))
 #'}
@@ -182,7 +183,9 @@ fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod
 
        #  fit=lm(100/mpg~wt*hp,data=mtcars)
        # predictors=c("wt","hp")
-       # mode=1;pred.values=NULL;modx.values=NULL;mod2.values=NULL;colorn=3;maxylev=6
+       # fit=lm(mpg~hp*wt*cyl+carb+am,data=mtcars)
+       # predictors=c("hp")
+       # mode=1;pred.values=NULL;modx.values=NULL;mod2.values=NULL;colorn=3;maxylev=6;summarymode=1
 
      predictors=restoreNames(predictors)
      predictors
@@ -230,6 +233,8 @@ fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod
 
     if(!is.null(pred.values)) newdf=pred.values
     newdf=data.frame(newdf)
+    newdf
+
         if(length(df1)>1){
         newdf2<-lapply(df1[2:length(df1)],function(x) {
             if(is.mynumeric(x,maxylev=maxylev)) {
@@ -242,24 +247,30 @@ fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod
         })
         if(!is.null(modx.values)) newdf2[[1]]=modx.values
         if(!is.null(mod2.values)) newdf2[[2]]=mod2.values
-        newdf2<-newdf2 %>% reduce(crossing)
-        newdf=crossing(newdf,newdf2)
+        newdf2
+        if(length(newdf2)>1) {
+           newdf2<-newdf2 %>% reduce(expand.grid)
+        }
+        newdf=expand.grid2(newdf,newdf2)
     }
     colnames(newdf)=colnames(df1)
 
     caption<-NULL
     if(length(df2)>0){
+        # lapply(df2,modelr::typical)
         if(summarymode==1){
-           newdf3<-lapply(df2,modelr::typical) %>% reduce(crossing)
+           newdf3<-lapply(df2,modelr::typical)
         } else{
-          newdf3<-lapply(df2,mean,na.rm=TRUE) %>% reduce(crossing)
+          newdf3<-lapply(df2,mean,na.rm=TRUE)
         }
+        newdf3
         newdf3=data.frame(newdf3,stringsAsFactors = FALSE)
         if(nrow(newdf3)>1) newdf3<-newdf3[1,]
         colnames(newdf3)=names(df2)
         caption<-paste(names(newdf3),newdf3[1,],sep="=",collapse=",")
-
-        newdf<-crossing(newdf,newdf3)
+        newdf3
+        newdf
+        newdf<-expand.grid2(newdf,newdf3)
     }
 
     newdf
@@ -313,6 +324,24 @@ fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod
 
 }
 
+
+#' expand.grid with two data.frames
+#' @param df1 A data.frame
+#' @param df2 A data.frame
+expand.grid2=function(df1,df2){
+    result=list()
+    for(i in 1:length(df1)){
+        result[[i]]=sort(unique(df1[[i]]))
+    }
+    count=ncol(df1)
+    for(j in 1:length(df2)){
+       result[[count+j]]=sort(unique(df2[[j]]))
+    }
+    result
+    df=data.frame(expand.grid(result,stringsAsFactors = FALSE),stringsAsFactors = FALSE)
+    colnames(df)=c(colnames(df1),colnames(df2))
+    df
+}
 
 #' Visualize predictions from the multiple regression models.
 #'@param fit An object of class "lm" or "glm"
