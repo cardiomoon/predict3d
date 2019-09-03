@@ -383,6 +383,7 @@ expand.grid2=function(df1,df2){
 #'fit=loess(mpg~hp*wt*am,data=mtcars)
 #'ggPredict(fit)
 #'ggPredict(fit,hp)
+#'\donttest{
 #'ggPredict(fit,hp,wt)
 #'fit=lm(mpg~hp*wt,data=mtcars)
 #'ggPredict(fit)
@@ -391,7 +392,6 @@ expand.grid2=function(df1,df2){
 #'ggPredict(fit,mode=3,colorn=40,show.text=FALSE)
 #'fit=lm(log(mpg)~hp*wt,data=mtcars)
 #'ggPredict(fit,dep=mpg)
-#'\donttest{
 #'fit=lm(mpg~hp*wt*cyl,data=mtcars)
 #'ggPredict(fit,modx=wt,modx.values=c(2,3,4,5),mod2=cyl,show.text=FALSE)
 #'ggPredict(fit,hp,wt,show.point=FALSE,se=TRUE,xpos=0.5)
