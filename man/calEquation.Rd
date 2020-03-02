@@ -4,8 +4,16 @@
 \alias{calEquation}
 \title{calculated slope and intercept from object of class lm}
 \usage{
-calEquation(fit, mode = 1, pred = NULL, modx = NULL,
-  modx.values = NULL, label = NULL, maxylev = 6, digits = 2)
+calEquation(
+  fit,
+  mode = 1,
+  pred = NULL,
+  modx = NULL,
+  modx.values = NULL,
+  label = NULL,
+  maxylev = 6,
+  digits = 2
+)
 }
 \arguments{
 \item{fit}{An object of class lm}

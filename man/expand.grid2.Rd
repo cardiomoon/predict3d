@@ -4,7 +4,7 @@
 \alias{expand.grid2}
 \title{expand.grid with two data.frames}
 \usage{
-expand.grid2(df1, df2)
+\method{expand}{grid2}(df1, df2)
 }
 \arguments{
 \item{df1}{A data.frame}

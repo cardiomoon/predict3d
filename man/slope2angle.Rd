@@ -4,9 +4,22 @@
 \alias{slope2angle}
 \title{Make angle data with slope data}
 \usage{
-slope2angle(df, fit, ytransform = 0, predc, temppredc, modxc, yvar, p,
-  method = "lm", xpos = NULL, vjust = NULL, digits = 3,
-  facetno = NULL, add.modx.values = TRUE)
+slope2angle(
+  df,
+  fit,
+  ytransform = 0,
+  predc,
+  temppredc,
+  modxc,
+  yvar,
+  p,
+  method = "lm",
+  xpos = NULL,
+  vjust = NULL,
+  digits = 3,
+  facetno = NULL,
+  add.modx.values = TRUE
+)
 }
 \arguments{
 \item{df}{A data.frame}

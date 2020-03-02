@@ -4,8 +4,15 @@
 \alias{number2group}
 \title{Convert a numeric vector into groups}
 \usage{
-number2group(x, mode = 1, values = NULL, silent = FALSE,
-  label = "label", digits = 2, colorn = 3)
+number2group(
+  x,
+  mode = 1,
+  values = NULL,
+  silent = FALSE,
+  label = "label",
+  digits = 2,
+  colorn = 3
+)
 }
 \arguments{
 \item{x}{A numeric vector}

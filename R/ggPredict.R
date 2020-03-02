@@ -181,7 +181,7 @@ seekNamesDf=function(vars,df){
 #'}
 fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod2.values=NULL,colorn=3,maxylev=6,summarymode=1){
 
-       #  fit=lm(100/mpg~wt*hp,data=mtcars)
+         # fit=lm(100/mpg~wt*hp,data=mtcars)
        # predictors=c("wt","hp")
        # fit=lm(mpg~hp*wt*cyl+carb+am,data=mtcars)
        # predictors=c("hp")
@@ -426,12 +426,13 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
                     facet.modx=FALSE,facetbycol=TRUE,plot=TRUE,summarymode=1,...) {
 
 
-
-    # mod2=NULL;modx.values=NULL;mod2.values=NULL
-    # mode=1;colorn=3;maxylev=6;show.point=TRUE;se=FALSE;alpha=0.1
-    # show.text=TRUE; add.modx.values=TRUE
-    # labels=NULL;xpos=0.7;vjust=-0.5;digits=3
-    #
+      # fit=lm(mpg~wt+I(wt^2),data=mtcars)
+    # pred=NULL;modx=NULL;mod2=NULL;modx.values=NULL;mod2.values=NULL;dep=NULL
+    # mode=1;colorn=3;maxylev=6;show.point=TRUE;show.error=FALSE;error.color="red"
+    # jitter=NULL;se=FALSE;alpha=0.1
+    # show.text=TRUE; add.modx.values=TRUE;add.loess=FALSE
+    # labels=NULL;angle=NULL;xpos=NULL;vjust=NULL;digits=2
+    # facet.modx=FALSE;facetbycol=TRUE;plot=TRUE;summarymode=1
     #  fit=lm(log(NTAV)~I(age^2)*sex,data=radial)
     #  predc="I(age^2)";modxc="sex";mod2c=NULL;jitter=NULL;show.error=FALSE
     #  add.loess=FALSE;angle=NULL;facetbycol=TRUE;facet.modx=FALSE;colorn=3;mode=1
@@ -621,7 +622,7 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
 
     }
      # fitted=data.frame(fitted)
-            # print(newFormula)
+             # newFormula
 
 
     fitted
@@ -834,7 +835,8 @@ slope2angle=function(df,fit,ytransform=0,predc,temppredc,modxc,yvar,p,method="lm
              polynames=sort(polynames,decreasing=TRUE)
              polynames
              res=paste0(round(fit$coef[polynames[1]],digits),
-                        str_replace_all(names(fit$model)[2],"I\\(|\\)$",""))
+                        str_replace_all(polynames[1],"I\\(|\\)$",""))
+                        # str_replace_all(names(fit$model)[2],"I\\(|\\)$",""))
              if(length(polynames)>1){
                   for( i in 2:length(polynames)){
                        no=fit$coef[polynames[i]]

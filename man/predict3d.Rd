@@ -4,14 +4,36 @@
 \alias{predict3d}
 \title{Draw 3d predict plot using package `rgl`}
 \usage{
-predict3d(fit, pred = NULL, modx = NULL, mod2 = NULL, dep = NULL,
-  xlab = NULL, ylab = NULL, zlab = NULL, width = 640,
-  colorn = 20, maxylev = 6, se = FALSE, show.summary = FALSE,
-  overlay = NULL, show.error = FALSE, show.legend = FALSE,
-  bg = NULL, type = "s", radius = 2, palette = NULL,
-  palette.reverse = TRUE, color = "red", show.subtitle = TRUE,
-  show.plane = TRUE, plane.color = "steelblue", plane.alpha = 0.5,
-  summarymode = 1, ...)
+predict3d(
+  fit,
+  pred = NULL,
+  modx = NULL,
+  mod2 = NULL,
+  dep = NULL,
+  xlab = NULL,
+  ylab = NULL,
+  zlab = NULL,
+  width = 640,
+  colorn = 20,
+  maxylev = 6,
+  se = FALSE,
+  show.summary = FALSE,
+  overlay = NULL,
+  show.error = FALSE,
+  show.legend = FALSE,
+  bg = NULL,
+  type = "s",
+  radius = 2,
+  palette = NULL,
+  palette.reverse = TRUE,
+  color = "red",
+  show.subtitle = TRUE,
+  show.plane = TRUE,
+  plane.color = "steelblue",
+  plane.alpha = 0.5,
+  summarymode = 1,
+  ...
+)
 }
 \arguments{
 \item{fit}{A model object for which prediction is desired.}

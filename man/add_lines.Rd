@@ -4,8 +4,17 @@
 \alias{add_lines}
 \title{Add lines with labels to pre-existing ggplot}
 \usage{
-add_lines(p, df, xpos = 0.3, add.coord.fixed = TRUE, lty = NULL,
-  color = NULL, size = 0.5, add_theme_bw2 = TRUE, ...)
+add_lines(
+  p,
+  df,
+  xpos = 0.3,
+  add.coord.fixed = TRUE,
+  lty = NULL,
+  color = NULL,
+  size = 0.5,
+  add_theme_bw2 = TRUE,
+  ...
+)
 }
 \arguments{
 \item{p}{An object of class ggplot}

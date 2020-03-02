@@ -4,9 +4,17 @@
 \alias{fit2newdata}
 \title{Make a new data set for prediction}
 \usage{
-fit2newdata(fit, predictors, mode = 1, pred.values = NULL,
-  modx.values = NULL, mod2.values = NULL, colorn = 3, maxylev = 6,
-  summarymode = 1)
+fit2newdata(
+  fit,
+  predictors,
+  mode = 1,
+  pred.values = NULL,
+  modx.values = NULL,
+  mod2.values = NULL,
+  colorn = 3,
+  maxylev = 6,
+  summarymode = 1
+)
 }
 \arguments{
 \item{fit}{An object of class "lm", "glm" or "loess"}
