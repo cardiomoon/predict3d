@@ -110,6 +110,11 @@ rank2colors=function(x,palette="Blues",reverse=TRUE,color="red"){
 #' predict3d(fit,radius=0.5)
 #'fit=loess(mpg~hp*wt,data=mtcars)
 #'predict3d(fit,radius=4)
+#'states<-as.data.frame(state.x77[,c("Murder","Population","Illiteracy","Income","Frost")])
+#'fit=lm(Murder~Population+Illiteracy+Income,data=states)
+#'predict3d(fit,radius=200)
+#'fit=lm(mpg~cyl+hp+wt,data=mtcars)
+#'predict3d(fit)
 #'}
 predict3d=function (fit, pred=NULL,modx=NULL,mod2=NULL,dep=NULL,
                     xlab=NULL,ylab=NULL,zlab=NULL,
@@ -127,7 +132,8 @@ predict3d=function (fit, pred=NULL,modx=NULL,mod2=NULL,dep=NULL,
      # show.legend=FALSE;bg=NULL;type="s";radius=2
      # palette=NULL;palette.reverse=TRUE;color="red"
      # show.plane=TRUE;plane.color="steelblue";plane.alpha=0.5;
-     # show.subtitle=TRUE;summarymode=1
+     # show.subtitle=TRUE;summarymode=1;radius=200
+     # require(rlang);require(tidyverse);require(rgl)
 
 
      myradius=radius
@@ -171,6 +177,7 @@ predict3d=function (fit, pred=NULL,modx=NULL,mod2=NULL,dep=NULL,
      colorname=restoreNames(colorname)
 
      facetname <- quo_name(enexpr(mod2))
+     facetname
      mod2<-enquo(mod2)
      if(facetname=="NULL"){
           if(checkVarname & ncol(rawdata)>3){
