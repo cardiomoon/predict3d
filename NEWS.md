@@ -1,8 +1,8 @@
 predict3 version 0.1.3.4
 ========================
-(2020-Mar-2)
+(2020-Mar-3)
 
-# bug-fixed 
+# bug-fixed: can predict non-intercept model
 
 
 predict3 version 0.1.3.3

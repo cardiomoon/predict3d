@@ -385,6 +385,8 @@ expand.grid2=function(df1,df2){
 #'ggPredict(fit,hp)
 #'\donttest{
 #'ggPredict(fit,hp,wt)
+#'fit=lm(mpg~wt*hp-1,data=mtcars)
+#'ggPredict(fit,xpos=0.7)
 #'fit=lm(mpg~hp*wt,data=mtcars)
 #'ggPredict(fit)
 #'ggPredict(fit,labels=paste0("label",1:3),xpos=c(0.3,0.6,0.4))
@@ -426,13 +428,16 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
                     facet.modx=FALSE,facetbycol=TRUE,plot=TRUE,summarymode=1,...) {
 
 
-      # fit=lm(mpg~wt+I(wt^2),data=mtcars)
+
+    # require(tidyverse);require(rlang)
+    # fit=lm(mpg~wt-1,data=mtcars)
     # pred=NULL;modx=NULL;mod2=NULL;modx.values=NULL;mod2.values=NULL;dep=NULL
     # mode=1;colorn=3;maxylev=6;show.point=TRUE;show.error=FALSE;error.color="red"
     # jitter=NULL;se=FALSE;alpha=0.1
     # show.text=TRUE; add.modx.values=TRUE;add.loess=FALSE
     # labels=NULL;angle=NULL;xpos=NULL;vjust=NULL;digits=2
     # facet.modx=FALSE;facetbycol=TRUE;plot=TRUE;summarymode=1
+
     #  fit=lm(log(NTAV)~I(age^2)*sex,data=radial)
     #  predc="I(age^2)";modxc="sex";mod2c=NULL;jitter=NULL;show.error=FALSE
     #  add.loess=FALSE;angle=NULL;facetbycol=TRUE;facet.modx=FALSE;colorn=3;mode=1
@@ -602,6 +607,7 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     # cat("names(fitted)=",names(fitted),"\n")
     # cat("exclude=",exclude,"\n")
     # cat("temp3=",temp3,"\n")
+    temp3
     fitted
 
     fitted<-eval(parse(text=temp3))
@@ -619,10 +625,17 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
          newFormula=as.formula(formulaString)
     } else{
         newFormula=fit$terms
+        # if(attr(fit$terms,"intercept")==0){
+        #     tempeq=as.character(fit$terms)
+        #     tempeq[3]=str_replace(tempeq[3]," - 1","")
+        #     tempeq=paste(tempeq[2],tempeq[1],tempeq[3])
+        #     tempeq
+        #     newFormula=as.formula(tempeq)
+        # }
 
     }
      # fitted=data.frame(fitted)
-             # newFormula
+               newFormula
 
 
     fitted
@@ -656,17 +669,17 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     for(i in seq_along(temp4)){
          fitted[[temp4[i]]]=newdata[[temp4[[i]]]][1]
     }
+
     coef=unlist(fitted$coef)
     coef
     fitted$intercept=coef[seq(1,by=2,length.out=nrow(fitted))]
     fitted$slope=coef[seq(2,by=2,length.out=nrow(fitted))]
-
-    if(method!="loess"){
-         if((names(fit$coef)[1]!="(Intercept)")){
-           fitted$intercept=0
-           fitted$slope=coef[seq(1,by=2,length.out=nrow(fitted))]
-         }
-    }
+#
+#     if(method!="loess"){
+#          if((names(fit$coef)[1]!="(Intercept)")){
+#            fitted$intercept=0
+#          }
+#     }
 
 
     # if(is.null(xpos)){
@@ -776,7 +789,7 @@ fitted
             p <- p+ geom_text(data=fitted,
                           aes_string(x="x",y="y",angle="angle",label="label",vjust="vjust"),...)
             # p <- p+ geom_text(data=fitted,
-            #                   aes_string(x="x",y="y",angle="angle",label="label",vjust="vjust"))
+            #        aes_string(x="x",y="y",angle="angle",label="label",vjust="vjust"))
 
 
         } else{
@@ -831,6 +844,7 @@ slope2angle=function(df,fit,ytransform=0,predc,temppredc,modxc,yvar,p,method="lm
         df$label=paste0(round(df$slope,digits),temppredc)
         if(str_detect(temppredc,"I\\(")) df$label=paste0(round(df$slope,digits),str_replace(temppredc,"I\\(","\\("))
         polynames=names(fit$model)[which(str_detect(names(fit$model),paste0("I\\(",predc,"\\^")))]
+        polynames
         if(length(polynames)>0){
              polynames=sort(polynames,decreasing=TRUE)
              polynames
@@ -851,9 +865,13 @@ slope2angle=function(df,fit,ytransform=0,predc,temppredc,modxc,yvar,p,method="lm
              df$label=res
 
         }
+        df$label
+
+        df$intercept[is.na(df$intercept)]=0
         df$label=paste0(df$label,
                     ifelse(df$intercept==0,"",ifelse(df$intercept>0," + "," - ")),
                     ifelse(df$intercept==0,"",round(abs(df$intercept),digits)))
+
         if(ytransform==1) {
             df$label=paste0("exp(",df$label,")")
         } else if(ytransform==-1){
@@ -1039,6 +1057,7 @@ getNewFormula=function(fit,predictors=NULL){
        # predictors=c("Petal.Length")
         # predictors=c("hp","wt")
       # fit$call
+     # fit=lm(mpg~wt*hp-1,data=mtcars);predictors="hp"
      predictors=str_replace_all(predictors,".*\\(|\\)","")
 
      if("loess" %in% class(fit)){
@@ -1081,9 +1100,10 @@ getNewFormula=function(fit,predictors=NULL){
     temp=seekNamesDf(temp,df)
 
     result=paste0(yvar,"~",paste(temp,collapse="+"))
-    if(!("loess" %in% class(fit))){
-          if(names(fit$coef)[1]!="(Intercept)") result=paste0(result,"-1")
-    }
+
+    # if(!("loess" %in% class(fit))){
+    #       if(names(fit$coef)[1]!="(Intercept)") result=paste0(result,"-1")
+    # }
     result
 
 }
