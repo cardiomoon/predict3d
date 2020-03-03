@@ -120,22 +120,14 @@ predict3d=function (fit, pred=NULL,modx=NULL,mod2=NULL,dep=NULL,
           show.plane=TRUE,plane.color="steelblue",plane.alpha=0.5,summarymode=1,...)
 {
 
-   # tm=ifelse(mtcars$am==0,"automatic","manual")
-
-   #   mtcars$engine=ifelse(mtcars$vs==0,"V-shaped","straight")
-   #   fit=lm(mpg~wt*engine,data=mtcars)
-   #  fit=lm(govact~negemot*age+posemot+ideology+sex,data=glbwarm)
-   # fit=lm(mpg~hp*wt,data=mtcars)
-   #
-   #  xname="hp"
-   #  colorname="wt"
-   #  facetname=NULL
-   #  colorn = 20; maxylev=6; se = FALSE;
-   # show.summary = FALSE; overlay=NULL;
-   # show.legend=FALSE;bg=NULL;type="s";radius=1
-   # palette="Blues";palette.reverse=TRUE
-   # show.plane=TRUE;plane.color="blue";plane.alpha=0.2;
-   # show.subtitle=FALSE;width=640;bg="white"
+     # pred=NULL;modx=NULL;mod2=NULL;dep=NULL
+     # xlab=NULL;ylab=NULL;zlab=NULL
+     # width=640;colorn = 20; maxylev=6; se = FALSE
+     # show.summary = FALSE; overlay=NULL;show.error=FALSE
+     # show.legend=FALSE;bg=NULL;type="s";radius=2
+     # palette=NULL;palette.reverse=TRUE;color="red"
+     # show.plane=TRUE;plane.color="steelblue";plane.alpha=0.5;
+     # show.subtitle=TRUE;summarymode=1
 
 
      myradius=radius
