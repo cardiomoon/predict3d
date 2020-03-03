@@ -104,6 +104,8 @@ ggPredict(fit)
 ggPredict(fit,hp)
 \donttest{
 ggPredict(fit,hp,wt)
+fit=lm(mpg~wt*hp-1,data=mtcars)
+ggPredict(fit,xpos=0.7)
 fit=lm(mpg~hp*wt,data=mtcars)
 ggPredict(fit)
 ggPredict(fit,labels=paste0("label",1:3),xpos=c(0.3,0.6,0.4))
