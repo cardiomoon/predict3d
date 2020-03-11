@@ -1,3 +1,10 @@
+predict3 version 0.1.3.5
+========================
+(2020-Mar-11)
+
+# bug-fixed: ggPredict now can predict if the first predictor is not numeric
+
+
 predict3 version 0.1.3.4
 ========================
 (2020-Mar-3)

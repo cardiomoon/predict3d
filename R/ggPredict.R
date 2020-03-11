@@ -431,6 +431,8 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
 
     # require(tidyverse);require(rlang)
     # fit=lm(mpg~wt-1,data=mtcars)
+    # mtcars$engine=ifelse(mtcars$vs==0,"V-shaped","straight")
+    # fit=lm(mpg~engine*wt,data=mtcars)
     # pred=NULL;modx=NULL;mod2=NULL;modx.values=NULL;mod2.values=NULL;dep=NULL
     # mode=1;colorn=3;maxylev=6;show.point=TRUE;show.error=FALSE;error.color="red"
     # jitter=NULL;se=FALSE;alpha=0.1
@@ -503,6 +505,19 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     if(depc!="NULL"){
          yvar=depc
     }
+
+    if(!is.numeric(rawdata[[predc]])){
+       if(is.numeric(rawdata[[modxc]])){
+            temp=predc
+            predc=modxc
+            modxc=temp
+       } else if(is.numeric(rawdata[[mod2c]])){
+         temp=predc
+         predc=mod2c
+         mod2c=temp
+       }
+    }
+
 
     predictors=c(predc,modxc,mod2c)
     if(checkVarname){
@@ -840,6 +855,7 @@ slope2angle=function(df,fit,ytransform=0,predc,temppredc,modxc,yvar,p,method="lm
     df$radian=atan(df$slope2)
     df$angle=df$radian*180/pi
 
+    df
     if(method=="lm"){
         df$label=paste0(round(df$slope,digits),temppredc)
         if(str_detect(temppredc,"I\\(")) df$label=paste0(round(df$slope,digits),str_replace(temppredc,"I\\(","\\("))
@@ -1011,7 +1027,7 @@ slope2angle=function(df,fit,ytransform=0,predc,temppredc,modxc,yvar,p,method="lm
     if(method!="lm") {
          df$angle=0
     } else if(predc!=names(fit$model)[2]){
-         df$angle=0
+         if(!(predc %in% names(fit$model))) df$angle=0
     }
 
 

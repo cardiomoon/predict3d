@@ -111,5 +111,10 @@ fit=lm(mpg~wt*engine,data=mtcars)
 predict3d(fit,radius=0.5)
 fit=loess(mpg~hp*wt,data=mtcars)
 predict3d(fit,radius=4)
+states<-as.data.frame(state.x77[,c("Murder","Population","Illiteracy","Income","Frost")])
+fit=lm(Murder~Population+Illiteracy+Income,data=states)
+predict3d(fit,radius=200)
+fit=lm(mpg~cyl+hp+wt,data=mtcars)
+predict3d(fit)
 }
 }
