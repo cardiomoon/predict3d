@@ -506,12 +506,12 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
          yvar=depc
     }
 
-    if(!is.numeric(rawdata[[predc]])){
-       if(is.numeric(rawdata[[modxc]])){
+    if(!is.mynumeric(rawdata[[predc]])){
+       if(is.mynumeric(rawdata[[modxc]])){
             temp=predc
             predc=modxc
             modxc=temp
-       } else if(is.numeric(rawdata[[mod2c]])){
+       } else if(is.mynumeric(rawdata[[mod2c]])){
          temp=predc
          predc=mod2c
          mod2c=temp
