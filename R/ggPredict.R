@@ -315,8 +315,8 @@ fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod
      }
     newdf[[yvar]]<-result$fit
     newdf$se.fit<-result$se.fit
-    newdf$ymax<-newdf[[yvar]]+result$se.fit
-    newdf$ymin<-newdf[[yvar]]-result$se.fit
+    newdf$ymax<-newdf[[yvar]]+1.96*result$se.fit
+    newdf$ymin<-newdf[[yvar]]-1.96*result$se.fit
     newdf=restoreData2(newdf)
     newdf=restoreData3(newdf)
     if(!is.null(caption)) attr(newdf,"caption")=caption
