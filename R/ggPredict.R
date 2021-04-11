@@ -164,7 +164,7 @@ seekNamesDf=function(vars,df){
 #'fit2newdata(fit,predictors=c("hp","wt"))
 #'fit=loess(mpg~hp*wt*am,data=mtcars)
 #'fit2newdata(fit,predictors=c("hp"))
-#'\donttest{
+#'\dontrun{
 #'mtcars$engine=ifelse(mtcars$vs==0,"V-shaped","straight")
 #'fit=lm(mpg~wt*engine,data=mtcars)
 #'fit2newdata(fit,predictors=c("wt","engine"))
@@ -185,7 +185,7 @@ fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod
        # predictors=c("wt","hp")
        # fit=lm(mpg~hp*wt*cyl+carb+am,data=mtcars)
        # predictors=c("hp")
-       # mode=1;pred.values=NULL;modx.values=NULL;mod2.values=NULL;colorn=3;maxylev=6;summarymode=1
+        # mode=1;pred.values=NULL;modx.values=NULL;mod2.values=NULL;colorn=3;maxylev=6;summarymode=1
 
      predictors=restoreNames(predictors)
      predictors
@@ -214,7 +214,7 @@ fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod
 
 
     df1<-df[predictors]
-    select=setdiff(names(df),predictors)
+    select=setdiff(names(df),c(predictors,"(weights)"))
 
     if(length(which(str_detect(select,"I\\(|factor\\(")))>0){
            select=select[-which(str_detect(select,"I\\(|factor\\("))]
@@ -383,7 +383,7 @@ expand.grid2=function(df1,df2){
 #'fit=loess(mpg~hp*wt*am,data=mtcars)
 #'ggPredict(fit)
 #'ggPredict(fit,hp)
-#'\donttest{
+#'\dontrun{
 #'ggPredict(fit,hp,wt)
 #'fit=lm(mpg~wt*hp-1,data=mtcars)
 #'ggPredict(fit,xpos=0.7)
@@ -415,6 +415,7 @@ expand.grid2=function(df1,df2){
 #'ggPredict(fit,hp,wt)
 #'fit=lm(mpg~hp*wt+disp+gear+carb+am,data=mtcars)
 #'ggPredict(fit,disp,gear,am)
+#'library(moonBook)
 #'fit=lm(weight~I(height^3)+I(height^2)+height+sex,data=radial)
 #'ggPredict(fit)
 #'predict3d(fit)
@@ -466,6 +467,11 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
         colnames(rawdata)[1]=yvar
     } else {
         rawdata=fit$model
+        temp=grep("(weights)",names(fit$model))
+        if(length(temp)>0) {
+            rawdata=rawdata[-temp]
+        }
+
     }
 
 
@@ -507,11 +513,11 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
     }
 
     if(!is.mynumeric(rawdata[[predc]])){
-       if(is.mynumeric(rawdata[[modxc]])){
+       if((!is.null(modxc)) && (is.mynumeric(rawdata[[modxc]]))){
             temp=predc
             predc=modxc
             modxc=temp
-       } else if(is.mynumeric(rawdata[[mod2c]])){
+       } else if((!is.null(mod2c))&&(is.mynumeric(rawdata[[mod2c]]))){
          temp=predc
          predc=mod2c
          mod2c=temp
@@ -520,6 +526,7 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
 
 
     predictors=c(predc,modxc,mod2c)
+    predictors
     if(checkVarname){
     predictors=unique(restoreNames(predictors))
     predc<-modxc<-mod2c<-NULL

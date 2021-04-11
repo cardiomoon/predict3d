@@ -102,7 +102,7 @@ Visualize predictions from the multiple regression models.
 fit=loess(mpg~hp*wt*am,data=mtcars)
 ggPredict(fit)
 ggPredict(fit,hp)
-\donttest{
+\dontrun{
 ggPredict(fit,hp,wt)
 fit=lm(mpg~wt*hp-1,data=mtcars)
 ggPredict(fit,xpos=0.7)
@@ -134,6 +134,7 @@ fit=lm(mpg~log(hp)*wt,data=mtcars)
 ggPredict(fit,hp,wt)
 fit=lm(mpg~hp*wt+disp+gear+carb+am,data=mtcars)
 ggPredict(fit,disp,gear,am)
+library(moonBook)
 fit=lm(weight~I(height^3)+I(height^2)+height+sex,data=radial)
 ggPredict(fit)
 predict3d(fit)

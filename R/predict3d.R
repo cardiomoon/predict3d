@@ -99,7 +99,7 @@ rank2colors=function(x,palette="Blues",reverse=TRUE,color="red"){
 #'predict3d(fit,show.error=TRUE)
 #'fit=lm(log(mpg)~hp*wt,data=mtcars)
 #'predict3d(fit,dep=mpg)
-#'\donttest{
+#'\dontrun{
 #'fit=lm(Sepal.Length~Sepal.Width*Species,data=iris)
 #'predict3d(fit,radius=0.05)
 #'require(TH.data)

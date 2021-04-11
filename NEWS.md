@@ -1,3 +1,10 @@
+predict3 version 0.1.3.7
+========================
+(2020-Mar-27)
+
+# can predict model with weights
+
+
 predict3 version 0.1.3.6
 ========================
 (2020-Mar-27)
