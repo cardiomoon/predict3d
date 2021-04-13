@@ -23,7 +23,7 @@ predict3d(
   show.legend = FALSE,
   bg = NULL,
   type = "s",
-  radius = 2,
+  radius = NULL,
   palette = NULL,
   palette.reverse = TRUE,
   color = "red",
@@ -102,19 +102,20 @@ fit=lm(log(mpg)~hp*wt,data=mtcars)
 predict3d(fit,dep=mpg)
 \dontrun{
 fit=lm(Sepal.Length~Sepal.Width*Species,data=iris)
-predict3d(fit,radius=0.05)
+predict3d(fit)
 require(TH.data)
 fit=glm(cens~pnodes*age*horTh,data=GBSG2,family=binomial)
 predict3d(fit)
 mtcars$engine=ifelse(mtcars$vs==0,"V-shaped","straight")
 fit=lm(mpg~wt*engine,data=mtcars)
-predict3d(fit,radius=0.5)
+predict3d(fit)
 fit=loess(mpg~hp*wt,data=mtcars)
 predict3d(fit,radius=4)
 states<-as.data.frame(state.x77[,c("Murder","Population","Illiteracy","Income","Frost")])
-fit=lm(Murder~Population+Illiteracy+Income,data=states)
+fit=lm(Murder~Population+Illiteracy,data=states)
+predict3d(fit)
 predict3d(fit,radius=200)
-fit=lm(mpg~cyl+hp+wt,data=mtcars)
+fit=lm(mpg~cyl+hp+am,data=mtcars)
 predict3d(fit)
 }
 }
