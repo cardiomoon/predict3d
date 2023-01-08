@@ -99,7 +99,7 @@ Once you have create a model with predict3d(), you can rotate your object with y
 ```{r,eval=FALSE}
 start <- proc.time()[3]
 while ((i <- 36*(proc.time()[3] - start)) < 360) {
-     rgl.viewpoint(i, i/4); 
+     view3d(i, i/4); 
 }
 play3d(spin3d(axis = c(1, 0, 0), rpm = 30), duration = 2)
 ```

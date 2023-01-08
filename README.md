@@ -128,7 +128,7 @@ Once you have create a model with predict3d(), you can move your object with you
 ```r
 start <- proc.time()[3]
 while ((i <- 36*(proc.time()[3] - start)) < 360) {
-     rgl.viewpoint(i, i/4); 
+     view3d(i, i/4); 
 }
 play3d(spin3d(axis = c(1, 0, 0), rpm = 30), duration = 2)
 ```
