@@ -86,7 +86,7 @@ rank2colors=function(x,palette="Blues",reverse=TRUE,color="red"){
 #' @param summarymode  An integer indicating method of extracting typical value of variables. If 1, typical() is used.If 2, mean() is used.
 #' @param ... additional parameters which will be passed to plot3d
 #'
-#' @importFrom rgl open3d next3d surface3d plot3d lines3d mfrow3d bg3d legend3d rglwidget axis3d par3d rgl.bg segments3d rgl.bringtotop rgl.clear
+#' @importFrom rgl open3d next3d surface3d plot3d lines3d mfrow3d bg3d legend3d rglwidget axis3d par3d segments3d rgl.bringtotop clear3d
 #' @importFrom grDevices xyz.coords
 #' @importFrom tidyr spread
 #' @importFrom dplyr select
@@ -279,8 +279,8 @@ predict3d=function (fit, pred=NULL,modx=NULL,mod2=NULL,dep=NULL,
    }
    par3d(windowRect = 50 + c( 0, 0, width, width ) )
    rgl.bringtotop()
-   if(!is.null(bg)) rgl.bg(color = bg)
-   rgl.clear(type = c("shapes", "bboxdeco"))
+   if(!is.null(bg)) bg3d(color = bg)
+   clear3d(type = c("shapes", "bboxdeco"))
    rgl.bringtotop()
 
 
