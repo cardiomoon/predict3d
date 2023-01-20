@@ -175,10 +175,10 @@ seekNamesDf=function(vars,df){
 #'fit2newdata(fit,predictors=c("hp","log(wt)"))
 #'fit=lm(mpg~hp*wt*factor(vs),data=mtcars)
 #'fit2newdata(fit,predictors=c("hp"))
+#'}
 #'require(moonBook)
 #'fit=lm(log(NTAV)~I(age^2)*sex,data=radial)
 #'fit2newdata(fit,predictors=c("I(age^2)","sex"))
-#'}
 fit2newdata=function(fit,predictors,mode=1,pred.values=NULL,modx.values=NULL,mod2.values=NULL,colorn=3,maxylev=6,summarymode=1){
 
          # fit=lm(100/mpg~wt*hp,data=mtcars)
