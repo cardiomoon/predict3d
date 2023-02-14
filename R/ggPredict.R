@@ -828,6 +828,7 @@ fitted
         p<-p+labs(caption=paste0("Analysis assuming ",attr(newdata,"caption")))
     }
     if(plot==TRUE) print(p)
+    class(p)=c("gg","ggplot","ggPredict")
     invisible(list(p=p,
          newdata=newdata,
          slope=fitted,
