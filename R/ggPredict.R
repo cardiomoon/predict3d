@@ -13,6 +13,18 @@ getMeans=function(x){
      result
 }
 
+#'Create a sequence over the range of a vector
+#'@param x A numeric vector
+#'@param n An integer specifying the length of sequence (i.e., number of points across the range of x)
+#'@export
+#'@examples
+#'seq_range(1:5,n=3)
+seq_range=function(x,n=2){
+     seq(min(x, na.rm = TRUE), max(x, na.rm = TRUE), length.out = n)
+}
+
+
+
 #'Convert a numeric vector into groups
 #'@param x A numeric vector
 #'@param mode A numeric. If 1, mean(x) +c(-1,0,1)*sd(x) are used. If 2, quantile(x,probs=c(0.14,0.5,0.86),type=6) are used. If 3, values are used
@@ -148,7 +160,6 @@ seekNamesDf=function(vars,df){
 #'@param colorn The number of regression lines when the modifier variable(s) are numeric.
 #'@param maxylev An integer indicating the maximum number of levels of numeric variable be treated as a categorical variable
 #'@param summarymode An integer indicating method of extracting typical value of variables. If 1, typical() is used.If 2, mean() is used.
-#'@importFrom prediction seq_range
 #'@importFrom magrittr "%>%"
 #'@importFrom purrr reduce
 #'@importFrom modelr typical

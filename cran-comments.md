@@ -1,12 +1,9 @@
-This is the new submission of of the package 'predict3d'. 
+This is the update version of the package 'predict3d'. 
 
-X-CRAN-Comment: Archived on 2023-02-02 as issues were not corrected in time.
-
-I have fixed all existing problems at 
-https://cran-archive.r-project.org/web/checks/2023/2023-02-02_check_results_predict3d.html
+This version is independent of package prediction.
 
 ## Test environments
-* local OS X install, R 4.2.3
+* local OS X install, R 4.3.3
 * win-builder (devel and release)
 * rhub
 
