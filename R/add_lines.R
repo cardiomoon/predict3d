@@ -146,6 +146,5 @@ add_lines=function(p,df,xpos=0.3,add.coord.fixed=TRUE,lty=NULL,color=NULL,size=0
 #' @export
 theme_bw2=function(){
    theme_bw()+
-    theme(panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank())
+    theme(panel.grid = element_blank())
 }
