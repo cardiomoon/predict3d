@@ -1,3 +1,10 @@
+## predict3d version 0.1.6
+==========================
+(2025-Oct-1)
+
+- compatible with ggplot2(>= 4.0.0)
+
+
 ## predict3d version 0.1.5
 ==========================
 (2024-Apr-5)

@@ -12,3 +12,7 @@ getAspectRatio(p)
 \description{
 Get aspect information of a ggplot
 }
+\examples{
+p<-ggplot2::ggplot(data=mtcars,ggplot2::aes(x=.data$wt,y=.data$mpg))+ggplot2::geom_point()
+getAspectRatio(p)
+}

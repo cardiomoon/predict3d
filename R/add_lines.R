@@ -112,7 +112,7 @@ add_lines=function(p,df,xpos=0.3,add.coord.fixed=TRUE,lty=NULL,color=NULL,size=0
           })
           statfun[[i]]=local({
                j<-i
-               stat_function(fun=fun[[j]],lty=df$lty[j],color=df$color[j],size=size)
+               stat_function(fun=fun[[j]],lty=df$lty[j],color=df$color[j],linewidth=size)
           })
 
      }
@@ -134,7 +134,7 @@ add_lines=function(p,df,xpos=0.3,add.coord.fixed=TRUE,lty=NULL,color=NULL,size=0
 
      df
 
-     p<-p+geom_text(data=df,aes_string(x="x",y="y",label="label",angle="angle",vjust="vjust"),color=df$color,...)
+     p<-p+geom_text(data=df,aes(x=.data[["x"]],y=.data[["y"]],label=.data[["label"]],angle=.data[["angle"]],vjust=.data[["vjust"]]),color=df$color,...)
      if(add.coord.fixed) p<-p + coord_fixed(ratio=ratio)
      if(add_theme_bw2) p <- p+theme_bw2()
      p

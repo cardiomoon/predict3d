@@ -1,7 +1,7 @@
 Package: predict3d
 Type: Package
 Title: Draw Three Dimensional Predict Plot Using Package 'rgl'
-Version: 0.1.5
+Version: 0.1.6
 URL: https://github.com/cardiomoon/predict3d
 BugReports: https://github.com/cardiomoon/predict3d/issues
 Authors@R: person("Keon-Woong","Moon", role=c("aut", "cre"),email="cardiomoon@gmail.com")
@@ -12,7 +12,7 @@ Depends:
 License: GPL-2
 Encoding: UTF-8
 Imports:
-   ggplot2(>= 3.1.0),
+   ggplot2(>= 4.0.0),
    rgl(>= 1.0.1),
    dplyr,
    ggiraphExtra,
@@ -25,7 +25,7 @@ Imports:
    reshape2,
    plyr,
    tidyr
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.3
 Suggests: 
     moonBook,
     TH.data,

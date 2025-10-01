@@ -173,9 +173,9 @@ seekNamesDf=function(vars,df){
 #'fit2newdata(fit,predictors=c("hp","wt","cyl"))
 #'fit2newdata(fit,predictors=c("hp"))
 #'fit2newdata(fit,predictors=c("hp","wt"))
+#'\dontrun{
 #'fit=loess(mpg~hp*wt*am,data=mtcars)
 #'fit2newdata(fit,predictors=c("hp"))
-#'\dontrun{
 #'mtcars$engine=ifelse(mtcars$vs==0,"V-shaped","straight")
 #'fit=lm(mpg~wt*engine,data=mtcars)
 #'fit2newdata(fit,predictors=c("wt","engine"))
@@ -384,11 +384,11 @@ expand.grid2=function(df1,df2){
 #'@param plot Logical. Should a plot of the results be printed? Default is TRUE.
 #'@param summarymode  An integer indicating method of extracting typical value of variables. If 1, typical() is used.If 2, mean() is used.
 #'@param ... additional arguments to be passed to geom_text
-#'@importFrom rlang enquo "!!" quo_name enexpr
+#'@importFrom rlang enquo "!!" quo_name enexpr .data
 #'@importFrom dplyr group_by do
 #'@importFrom stats as.formula glm lm predict
 #'@importFrom ggplot2 geom_line geom_ribbon geom_point labs facet_grid geom_jitter geom_segment
-#'@importFrom ggplot2 ggplot aes_string stat_smooth geom_text coord_fixed theme_bw
+#'@importFrom ggplot2 ggplot aes stat_smooth geom_text coord_fixed theme_bw
 #'@export
 #'@examples
 #'fit=loess(mpg~hp*wt*am,data=mtcars)
@@ -443,8 +443,8 @@ ggPredict=function(fit,pred=NULL,modx=NULL,mod2=NULL,modx.values=NULL,mod2.value
 
     # require(tidyverse);require(rlang)
     # fit=lm(mpg~wt-1,data=mtcars)
-    # mtcars$engine=ifelse(mtcars$vs==0,"V-shaped","straight")
-    # fit=lm(mpg~engine*wt,data=mtcars)
+     # mtcars$engine=ifelse(mtcars$vs==0,"V-shaped","straight")
+     # fit=lm(mpg~engine*wt,data=mtcars)
     # pred=NULL;modx=NULL;mod2=NULL;modx.values=NULL;mod2.values=NULL;dep=NULL
     # mode=1;colorn=3;maxylev=6;show.point=TRUE;show.error=FALSE;error.color="red"
     # jitter=NULL;se=FALSE;alpha=0.1
@@ -727,9 +727,9 @@ yvar
 newdata
 fitted
     if(is.null(modxc)){
-    p<-ggplot(data=newdata,aes_string(x=predc,y=yvar))
+    p<-ggplot(data=newdata,aes(x=.data[[predc]],y=.data[[yvar]]))
     }  else {
-    p<-ggplot(data=newdata,aes_string(x=predc,y=yvar,color=modxc,fill=modxc,group=modxc))
+    p<-ggplot(data=newdata,aes(x=.data[[predc]],y=.data[[yvar]],color=.data[[modxc]],fill=.data[[modxc]],group=.data[[modxc]]))
     }
     p<-p+  geom_line()
 
@@ -744,10 +744,10 @@ fitted
         if(jitter) p<-p+geom_jitter(data=rawdata,width=0,height=0.05)
         else p<-p+geom_point(data=rawdata)
     }
-    if(show.error) p<-p+geom_segment(data=rawdata,aes_string(xend=predc,yend="yhat"),color=error.color)
+    if(show.error) p<-p+geom_segment(data=rawdata,aes(xend=.data[[predc]],yend=.data[["yhat"]]),color=error.color)
     if(add.loess) p<-p+stat_smooth(data=rawdata,se=FALSE,color="red",fullrange = TRUE)
 
-    if(se==TRUE) p<-p+ geom_ribbon(aes_string(ymax="ymax",ymin="ymin",color=NULL),alpha=alpha)
+    if(se==TRUE) p<-p+ geom_ribbon(aes(ymax=.data[["ymax"]],ymin=.data[["ymin"]],color=NULL),alpha=alpha)
     faceteq="~"
     if(!is.null(modxc)){
           if(facet.modx){
@@ -820,14 +820,14 @@ fitted
     if(show.text) {
         if(method=="lm"){
             p <- p+ geom_text(data=fitted,
-                          aes_string(x="x",y="y",angle="angle",label="label",vjust="vjust"),...)
+                          aes(x=.data$x,y=.data$y,angle=.data$angle,label=.data$label,vjust=.data$vjust),...)
             # p <- p+ geom_text(data=fitted,
-            #        aes_string(x="x",y="y",angle="angle",label="label",vjust="vjust"))
+            #        aes(x=.data$x,y=.data$y,angle=.data$angle,label=.data$label,vjust=.data$vjust))
 
 
         } else{
             p <- p+ geom_text(data=fitted,
-                              aes_string(x="x",y="y",angle="angle",label="label",vjust="vjust"),
+                              aes(x=.data$x,y=.data$y,angle=.data$angle,label=.data$label,vjust=.data$vjust),
                               parse=TRUE,...)
         }
     }
@@ -839,7 +839,7 @@ fitted
         p<-p+labs(caption=paste0("Analysis assuming ",attr(newdata,"caption")))
     }
     if(plot==TRUE) print(p)
-    class(p)=c("gg","ggplot","ggPredict")
+    #class(p)=c("gg","ggplot","ggPredict")
     invisible(list(p=p,
          newdata=newdata,
          slope=fitted,
@@ -861,6 +861,7 @@ fitted
 #'@param digits integer indicating the number of decimal places
 #'@param facetno The number of facets
 #'@param add.modx.values Whether add name of moderator variable
+#'@export
 slope2angle=function(df,fit,ytransform=0,predc,temppredc,modxc,yvar,p,method="lm",xpos=NULL,vjust=NULL,digits=3,facetno=NULL,add.modx.values=TRUE){
      # digits=3;xpos=0.7
     # method="lm";xpos=NULL;vjust=NULL;digits=3;facetno=NULL;add.modx.values=TRUE
@@ -1147,6 +1148,9 @@ getNewFormula=function(fit,predictors=NULL){
 #'@param p A ggplot object
 #'@importFrom ggplot2 layer_scales
 #'@export
+#'@examples
+#'p<-ggplot2::ggplot(data=mtcars,ggplot2::aes(x=.data$wt,y=.data$mpg))+ggplot2::geom_point()
+#'getAspectRatio(p)
 getAspectRatio=function(p){
      xmin=as.numeric(layer_scales(p)$x$range$range[1])
      xmax=as.numeric(layer_scales(p)$x$range$range[2])

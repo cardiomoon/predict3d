@@ -44,9 +44,9 @@ fit2newdata(fit,predictors=c("hp","wt","am"))
 fit2newdata(fit,predictors=c("hp","wt","cyl"))
 fit2newdata(fit,predictors=c("hp"))
 fit2newdata(fit,predictors=c("hp","wt"))
+\dontrun{
 fit=loess(mpg~hp*wt*am,data=mtcars)
 fit2newdata(fit,predictors=c("hp"))
-\dontrun{
 mtcars$engine=ifelse(mtcars$vs==0,"V-shaped","straight")
 fit=lm(mpg~wt*engine,data=mtcars)
 fit2newdata(fit,predictors=c("wt","engine"))
